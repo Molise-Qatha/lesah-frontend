@@ -1,0 +1,172 @@
+.career-page {
+  Text-align: center;
+  Padding: 4rem 1.5rem;
+  Animation: fadeUp 0.8s ease;
+}
+
+.career-icon {
+  Font-size: 4rem;
+  Margin-bottom: 1rem;
+}
+
+.career-title {
+  Font-size: 2.3rem;
+  Font-weight: bold;
+}
+
+.career-subtitle {
+  Color: #555;
+  Margin-bottom: 2rem;
+}
+
+.career-btn {
+  Background: #2e7d32;
+  Color: white;
+  Border: none;
+  Padding: 0.8rem 2rem;
+  Border-radius: 30px;
+  Font-size: 1rem;
+  Cursor: pointer;
+  Transition: transform 0.3s;
+}
+
+.career-btn:hover {
+  Transform: scale(1.05);
+}
+
+.career-features {
+  Display: flex;
+  Gap: 1rem;
+  Justify-content: center;
+  Margin-top: 2.5rem;
+  Flex-wrap: wrap;
+}
+
+.career-card {
+  Background: #f3f3f3;
+  Padding: 1rem 1.5rem;
+  Border-radius: 15px;
+  Font-weight: 500;
+}
+
+/* MODAL */
+.career-overlay {
+  Position: fixed;
+  Inset: 0;
+  Background: rgba(0, 0, 0, 0.6);
+  Display: flex;
+  Align-items: center;
+  Justify-content: center;
+  z-index: 1000;
+}
+
+.career-modal {
+  Background: white;
+  Width: 100%;
+  Max-width: 420px;
+  Padding: 2rem;
+  Border-radius: 20px;
+  Position: relative;
+  Animation: pop 0.4s ease;
+}
+
+.close-btn {
+  Position: absolute;
+  Top: 10px;
+  Right: 15px;
+  Border: none;
+  Background: none;
+  Font-size: 1.2rem;
+  Cursor: pointer;
+}
+
+/* TOGGLE */
+.toggle {
+  Display: flex;
+  Margin-bottom: 1.5rem;
+}
+
+.toggle button {
+  Flex: 1;
+  Padding: 0.6rem;
+  Border: none;
+  Cursor: pointer;
+  Background: #eee;
+}
+
+.toggle .active {
+  Background: #2e7d32;
+  Color: white;
+}
+
+.toggle .premium {
+  Color: #b8860b;
+  Font-weight: bold;
+}
+
+.toggle .active.premium {
+  Background: #b8860b;
+  Color: white;
+}
+
+/* FORM */
+.career-form {
+  Display: flex;
+  Flex-direction: column;
+  Gap: 0.7rem;
+}
+
+.career-form h2 {
+  Margin-bottom: 0.5rem;
+}
+
+.career-form input,
+.career-form textarea,
+.career-form select {
+  Padding: 0.6rem;
+  Border-radius: 8px;
+  Border: 1px solid #ccc;
+}
+
+.checkbox {
+  Display: flex;
+  Gap: 0.5rem;
+  Font-size: 0.9rem;
+}
+
+.submit-btn {
+  Background: #2e7d32;
+  Color: white;
+  Border: none;
+  Padding: 0.7rem;
+  Border-radius: 20px;
+  Cursor: pointer;
+}
+
+.premium-btn {
+  Background: #b8860b;
+}
+
+/* ANIMATIONS */
+@keyframes fadeUp {
+  From {
+    Opacity: 0;
+    Transform: translateY(20px);
+  }
+  To {
+    Opacity: 1;
+    Transform: translateY(0);
+  }
+}
+
+@keyframes pop {
+  From {
+    Transform: scale(0.8);
+    Opacity: 0;
+  }
+  To {
+    Transform: scale(1);
+    Opacity: 1;
+  }
+}
+

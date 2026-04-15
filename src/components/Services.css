@@ -1,0 +1,253 @@
+.services {
+  padding: 80px 0;
+  background: #f8f9fa;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.section-title {
+  text-align: center;
+  font-size: 2.5rem;
+  margin-bottom: 3rem;
+  color: #333;
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+
+.section-title::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 2px;
+}
+
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+}
+
+.service-card {
+  border-radius: 20px;
+  padding: 2rem;
+  transition: all 0.4s ease;
+  text-align: center;
+  text-decoration: none;
+  display: block;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  min-height: 350px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Zoom Effect on Hover */
+.service-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: inherit;
+  background-size: cover;
+  background-position: center;
+  transition: transform 0.5s ease;
+  z-index: 0;
+}
+
+.service-card:hover::before {
+  transform: scale(1.1);
+}
+
+/* Content Styling */
+.service-card h3 {
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+  color: white;
+  font-weight: 700;
+  position: relative;
+  z-index: 1;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.service-card p {
+  color: rgba(255, 255, 255, 0.95);
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+  font-size: 0.95rem;
+  position: relative;
+  z-index: 1;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.service-link {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  color: white;
+  font-weight: 600;
+  padding: 12px 24px;
+  border-radius: 50px;
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 1;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  width: fit-content;
+  margin: 0 auto;
+  font-size: 0.95rem;
+}
+
+.service-card:hover .service-link {
+  background: white;
+  color: #667eea;
+  transform: translateX(5px);
+  border-color: white;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* ==================== TABLET VIEW ==================== */
+@media (max-width: 992px) {
+  .services {
+    padding: 60px 0;
+  }
+  
+  .section-title {
+    font-size: 2.2rem;
+    margin-bottom: 2.5rem;
+  }
+  
+  .services-grid {
+    gap: 1.5rem;
+  }
+  
+  .service-card {
+    padding: 1.5rem;
+    min-height: 320px;
+  }
+  
+  .service-card h3 {
+    font-size: 1.5rem;
+  }
+  
+  .service-card p {
+    font-size: 0.9rem;
+  }
+  
+  .service-link {
+    padding: 10px 20px;
+    font-size: 0.9rem;
+  }
+}
+
+/* ==================== MOBILE VIEW ==================== */
+@media (max-width: 768px) {
+  .services {
+    padding: 50px 0;
+  }
+  
+  .section-title {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+  }
+  
+  .section-title::after {
+    width: 50px;
+    height: 2px;
+  }
+  
+  .services-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .service-card {
+    padding: 1.5rem;
+    min-height: auto;
+  }
+  
+  .service-card h3 {
+    font-size: 1.4rem;
+  }
+  
+  .service-card p {
+    font-size: 0.9rem;
+    margin-bottom: 1.2rem;
+  }
+  
+  .service-link {
+    padding: 10px 20px;
+    font-size: 0.9rem;
+  }
+}
+
+/* ==================== SMALL MOBILE ==================== */
+@media (max-width: 480px) {
+  .services {
+    padding: 40px 0;
+  }
+  
+  .section-title {
+    font-size: 1.8rem;
+  }
+  
+  .service-card {
+    padding: 1.2rem;
+  }
+  
+  .service-card h3 {
+    font-size: 1.3rem;
+  }
+  
+  .service-card p {
+    font-size: 0.85rem;
+  }
+  
+  .service-link {
+    padding: 8px 16px;
+    font-size: 0.85rem;
+  }
+}
+
+/* Animation for cards on load */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.service-card {
+  animation: fadeInUp 0.6s ease forwards;
+  opacity: 0;
+}
+
+.service-card:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.service-card:nth-child(2) {
+  animation-delay: 0.3s;
+}
+
+.service-card:nth-child(3) {
+  animation-delay: 0.5s;
+}

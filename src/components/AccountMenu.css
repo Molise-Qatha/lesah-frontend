@@ -1,0 +1,94 @@
+.account-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  width: 280px;
+  margin-top: 0.5rem;
+  overflow: hidden;
+  z-index: 1000;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.menu-header {
+  padding: 1rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.menu-avatar {
+  width: 50px;
+  height: 50px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+}
+
+.menu-user-info h4 {
+  margin: 0 0 0.25rem 0;
+  font-size: 1rem;
+}
+
+.menu-user-info p {
+  margin: 0;
+  font-size: 0.85rem;
+  opacity: 0.9;
+}
+
+.menu-items {
+  padding: 0.5rem 0;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  color: #333;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  width: 100%;
+  border: none;
+  background: none;
+  font-size: 0.95rem;
+}
+
+.menu-item:hover {
+  background: #f3f4f6;
+  padding-left: 1.25rem;
+}
+
+.menu-icon {
+  font-size: 1.2rem;
+  width: 24px;
+}
+
+.menu-item.logout {
+  color: #ef4444;
+  border-top: 1px solid #e5e7eb;
+  margin-top: 0.5rem;
+}
+
+.menu-item.logout:hover {
+  background: #fee2e2;
+}
