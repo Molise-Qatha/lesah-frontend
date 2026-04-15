@@ -17,22 +17,27 @@ function Login() {
     e.preventDefault();
     setError('');
     setIsLoading(true);
+
+    const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+    const url = `${API_BASE}/api/v1/auth/login`;
+
     try {
-      const res = await fetch(`${process.env.REACT_APP_API_URL}/api/v1/auth/login`, {
+      const response = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       });
-      const data = await res.json();
-      if (res.ok) {
+      const data = await response.json();
+      if (response.ok) {
         localStorage.setItem('access_token', data.access_token);
         localStorage.setItem('refresh_token', data.refresh_token);
-        navigate(location.state?.from || '/');
+        const from = location.state?.from || '/';
+        navigate(from);
       } else {
-        setError(data.detail || 'Invalid credentials');
+        setError(data.detail || 'Invalid email or password');
       }
     } catch (err) {
-      setError('Connection error');
+      setError('Unable to connect to the server. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -43,16 +48,34 @@ function Login() {
       <div className="auth-container">
         <div className="auth-card">
           <h1>Login to LeSAH</h1>
-          <form onSubmit={handleSubmit}>
-            <input name="email" placeholder="Email" onChange={handleChange} required />
-            <input name="password" type="password" placeholder="Password" onChange={handleChange} required />
-            <button type="submit" disabled={isLoading}>Login</button>
-            {error && <div className="error">{error}</div>}
+          <p>Welcome back</p>
+          {error && <div className="error-message">{error}</div>}
+          <form onSubmit={handleSubmit} className="auth-form">
+            <div className="form-group">
+              <label>Email Address</label>
+              <input type="email" name="email" placeholder="student@university.ac.ls" value={formData.email} onChange={handleChange} required />
+            </div>
+            <div className="form-group">
+              <label>Password</label>
+              <input type="password" name="password" placeholder="Enter your password" value={formData.password} onChange={handleChange} required />
+            </div>
+            <div className="form-options">
+              <label className="checkbox-label">
+                <input type="checkbox" /> Remember me
+              </label>
+              <Link to="/forgot-password" className="forgot-link">Forgot Password?</Link>
+            </div>
+            <button type="submit" className="auth-btn" disabled={isLoading}>
+              {isLoading ? 'Logging in...' : 'Login'}
+            </button>
           </form>
-          <Link to="/register">Create account</Link>
+          <div className="auth-footer">
+            <p>Don't have an account? <Link to="/register">Sign Up</Link></p>
+          </div>
         </div>
       </div>
     </div>
   );
 }
+
 export default Login;
