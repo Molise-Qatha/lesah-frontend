@@ -1,0 +1,5 @@
+/static/css/*.css
+  Content-Type: text/css
+
+/static/js/*.js
+  Content-Type: application/javascript
