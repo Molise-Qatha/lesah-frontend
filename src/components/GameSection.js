@@ -80,28 +80,27 @@ function GameSection() {
     { sesotho: "Botala ke joang, bofubelu ke ba mali, monate ke oa tsoekere", answer: "lehapu" }
   ];
 
-  // Merged English riddles (80+ unique)
   const englishRiddles = [
     { question: "I speak without a mouth and hear without ears. I have no body, but I come alive with wind. What am I?", answer: "echo", difficulty: "medium", hint: "You might hear me in a canyon." },
     { question: "The more you take, the more you leave behind. What am I?", answer: "footsteps", difficulty: "medium", hint: "You make them when you walk." },
     { question: "I have cities, but no houses. I have mountains, but no trees. I have water, but no fish. What am I?", answer: "map", difficulty: "hard", hint: "It's a representation of the world." },
     { question: "What is so fragile that saying its name breaks it?", answer: "silence", difficulty: "easy", hint: "It is the absence of sound." },
-    { question: "I’m tall when I’m young and short when I’m old. What am I?", answer: "candle", difficulty: "easy", hint: "I provide light and melt over time." },
-    { question: "What has keys but can’t open locks?", answer: "piano", difficulty: "easy", hint: "It makes music." },
-    { question: "What has hands but can’t clap?", answer: "clock", difficulty: "easy", hint: "It tells the time." },
+    { question: "I'm tall when I'm young and short when I'm old. What am I?", answer: "candle", difficulty: "easy", hint: "I provide light and melt over time." },
+    { question: "What has keys but can't open locks?", answer: "piano", difficulty: "easy", hint: "It makes music." },
+    { question: "What has hands but can't clap?", answer: "clock", difficulty: "easy", hint: "It tells the time." },
     { question: "What has a head, a tail, is brown, and has no legs?", answer: "penny", difficulty: "easy", hint: "It's a coin." },
     { question: "What comes once in a minute, twice in a moment, but never in a thousand years?", answer: "m", difficulty: "medium", hint: "It's the 13th letter of the alphabet." },
-    { question: "What has many teeth but can’t bite?", answer: "comb", difficulty: "easy", hint: "It's used to style hair." },
-    { question: "What has one eye but can’t see?", answer: "needle", difficulty: "easy", hint: "It's used for sewing." },
+    { question: "What has many teeth but can't bite?", answer: "comb", difficulty: "easy", hint: "It's used to style hair." },
+    { question: "What has one eye but can't see?", answer: "needle", difficulty: "easy", hint: "It's used for sewing." },
     { question: "What gets wetter the more it dries?", answer: "towel", difficulty: "easy", hint: "You use it after a shower." },
     { question: "I have branches, but no fruit, trunk, or leaves. What am I?", answer: "bank", difficulty: "medium", hint: "It deals with money." },
     { question: "What can you break, even if you never pick it up or touch it?", answer: "promise", difficulty: "medium", hint: "It's an assurance you give to someone." },
-    { question: "What is always in front of you but can’t be seen?", answer: "future", difficulty: "medium", hint: "It hasn't happened yet." },
+    { question: "What is always in front of you but can't be seen?", answer: "future", difficulty: "medium", hint: "It hasn't happened yet." },
     { question: "What has a neck but no head?", answer: "bottle", difficulty: "easy", hint: "It often holds liquids." },
     { question: "What is full of holes but still holds water?", answer: "sponge", difficulty: "easy", hint: "It's used for cleaning." },
     { question: "What goes up but never comes down?", answer: "age", difficulty: "easy", hint: "It increases every year on your birthday." },
     { question: "What can run but never walks, has a mouth but never talks, has a head but never weeps, has a bed but never sleeps?", answer: "river", difficulty: "hard", hint: "It's a flowing body of water." },
-    { question: "I’m light as a feather, yet the strongest person can’t hold me for five minutes. What am I?", answer: "breath", difficulty: "medium", hint: "It's what you're doing right now to stay alive." },
+    { question: "I'm light as a feather, yet the strongest person can't hold me for five minutes. What am I?", answer: "breath", difficulty: "medium", hint: "It's what you're doing right now to stay alive." },
     { question: "What has words but never speaks?", answer: "book", difficulty: "easy", hint: "You can read me." },
     { question: "What belongs to you, but other people use it more than you do?", answer: "name", difficulty: "medium", hint: "It's what people call you." },
     { question: "I follow you all day long, but disappear when the sun goes down. What am I?", answer: "shadow", difficulty: "easy", hint: "I'm a dark shape on the ground." },
@@ -109,12 +108,12 @@ function GameSection() {
     { question: "What can you catch but not throw?", answer: "cold", difficulty: "easy", hint: "It makes you sneeze." },
     { question: "What has to be broken before you can use it?", answer: "egg", difficulty: "easy", hint: "You usually eat it for breakfast." },
     { question: "I'm found in socks, scarves and mittens; and often in the paws of playful kittens. What am I?", answer: "yarn", difficulty: "medium", hint: "Cats love playing with it." },
-    { question: "What has a heart that doesn’t beat?", answer: "artichoke", difficulty: "medium", hint: "It's a vegetable." },
+    { question: "What has a heart that doesn't beat?", answer: "artichoke", difficulty: "medium", hint: "It's a vegetable." },
     { question: "What can travel around the world while staying in one spot?", answer: "stamp", difficulty: "easy", hint: "It's used on letters." },
-    { question: "What has legs but doesn’t walk?", answer: "table", difficulty: "easy", hint: "Furniture." },
+    { question: "What has legs but doesn't walk?", answer: "table", difficulty: "easy", hint: "Furniture." },
     { question: "What has a ring but no finger?", answer: "phone", difficulty: "easy", hint: "It makes calls." },
     { question: "What kind of room has no doors or windows?", answer: "mushroom", difficulty: "easy", hint: "It's a fungus." },
-    { question: "What goes up and down but doesn’t move?", answer: "stairs", difficulty: "easy", hint: "You use them to change floors." },
+    { question: "What goes up and down but doesn't move?", answer: "stairs", difficulty: "easy", hint: "You use them to change floors." },
     { question: "What begins with T, ends with T, and has T in it?", answer: "teapot", difficulty: "medium", hint: "You pour from it." },
     { question: "The more of this there is, the less you see. What is it?", answer: "darkness", difficulty: "easy", hint: "It comes at night." },
     { question: "What has an eye but cannot see?", answer: "hurricane", difficulty: "medium", hint: "It's a storm." },
@@ -137,18 +136,18 @@ function GameSection() {
     { question: "What gets sharper the more you use it?", answer: "brain", difficulty: "medium", hint: "Thinking improves it." },
     { question: "What can fly without wings?", answer: "time", difficulty: "medium", hint: "It passes quickly." },
     { question: "I shave every day, but my beard stays the same. What am I?", answer: "barber", difficulty: "hard", hint: "It's a profession." },
-    { question: "You see a boat filled with people, yet there isn’t a single person on board. How is that possible?", answer: "all married", difficulty: "hard", hint: "Single means unmarried." },
-    { question: "What can’t be put in a saucepan?", answer: "its lid", difficulty: "hard", hint: "Think about parts of cookware." },
-    { question: "The person who makes it sells it. The person who buys it never uses it. The person who uses it never knows they’re using it. What is it?", answer: "coffin", difficulty: "hard", hint: "Associated with funerals." },
+    { question: "You see a boat filled with people, yet there isn't a single person on board. How is that possible?", answer: "all married", difficulty: "hard", hint: "Single means unmarried." },
+    { question: "What can't be put in a saucepan?", answer: "its lid", difficulty: "hard", hint: "Think about parts of cookware." },
+    { question: "The person who makes it sells it. The person who buys it never uses it. The person who uses it never knows they're using it. What is it?", answer: "coffin", difficulty: "hard", hint: "Associated with funerals." },
     { question: "What can bring back the dead, make you cry, make you laugh, make you young, is born in an instant yet lasts a lifetime?", answer: "memory", difficulty: "hard", hint: "It's in your mind." },
-    { question: "What has many needles, but doesn’t sew?", answer: "pine tree", difficulty: "hard", hint: "It's a type of tree." },
+    { question: "What has many needles, but doesn't sew?", answer: "pine tree", difficulty: "hard", hint: "It's a type of tree." },
     { question: "Forward I am heavy, but backward I am not. What am I?", answer: "ton", difficulty: "hard", hint: "Reverse spelling." },
     { question: "What begins and has no end, and is the ending of all that begins?", answer: "death", difficulty: "hard", hint: "Inevitable." },
     { question: "I have no life, but I can die. What am I?", answer: "battery", difficulty: "hard", hint: "Used in electronics." },
     { question: "What can you hold without touching it?", answer: "conversation", difficulty: "hard", hint: "You do it when you talk." },
     { question: "What has no beginning, end, or middle?", answer: "circle", difficulty: "hard", hint: "Shape." },
     { question: "What has a neck but no head, two arms but no hands?", answer: "shirt", difficulty: "hard", hint: "Clothing." },
-    { question: "I am not alive, but I grow. I don’t have lungs, but I need air. What am I?", answer: "fire", difficulty: "hard", hint: "Hot and dangerous." },
+    { question: "I am not alive, but I grow. I don't have lungs, but I need air. What am I?", answer: "fire", difficulty: "hard", hint: "Hot and dangerous." },
     { question: "I can be cracked, made, told, and played. What am I?", answer: "joke", difficulty: "hard", hint: "Funny." },
     { question: "What comes once in a year, twice in a week, but never in a day?", answer: "e", difficulty: "hard", hint: "It's a letter." },
     { question: "I fly without wings, cry without eyes. Wherever I go, darkness flies. What am I?", answer: "cloud", difficulty: "hard", hint: "Sky." },
@@ -307,6 +306,7 @@ function GameSection() {
     setStreak(0);
     setRiddleCount(0);
     setGameOver(false);
+    setFeedback('');
   };
 
   const playAgain = () => {
@@ -403,6 +403,9 @@ function GameSection() {
                   {streak >= 3 && <span className="streak-bonus"> +{streak * 5} bonus!</span>}
                 </div>
                 <div className="riddle-count">📖 Lilotho: {riddleCount + 1}/{totalRiddles}</div>
+                <button className="back-button" onClick={resetGame} title="Khutlela morao">
+                  ← Khutlela
+                </button>
               </div>
               
               <div className="riddle-conversation">
