@@ -489,3 +489,518 @@
   .riddle-text { font-size: 1.25rem; }
   .game-over-buttons { flex-direction: column; }
 }
+/* GameSection.css - Modern, vibrant, and responsive */
+
+:root {
+  --primary: #2a9d8f;
+  --primary-dark: #21867a;
+  --primary-light: #e0f2f1;
+  --secondary: #264653;
+  --accent: #e9c46a;
+  --danger: #e76f51;
+  --success: #2a9d8f;
+  --warning: #f4a261;
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-300: #d1d5db;
+  --gray-400: #9ca3af;
+  --gray-500: #6b7280;
+  --gray-600: #4b5563;
+  --gray-700: #374151;
+  --gray-800: #1f2937;
+  --gray-900: #111827;
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  --radius: 0.5rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+}
+
+.game-section {
+  padding: 3rem 1rem;
+  background: linear-gradient(135deg, #f5f7fa 0%, #eef2f3 100%);
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.game-content {
+  background: white;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-xl);
+  padding: 2rem;
+  border: 1px solid rgba(42, 157, 143, 0.1);
+}
+
+.game-content h2 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--gray-900);
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.game-description {
+  text-align: center;
+  color: var(--gray-600);
+  font-size: 1.125rem;
+  margin-bottom: 2rem;
+  font-style: italic;
+}
+
+/* ----- Leaderboard ----- */
+.leaderboard {
+  background: var(--gray-50);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  border: 1px solid var(--gray-200);
+}
+
+.leaderboard h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--gray-800);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.leaderboard-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.leaderboard-item {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background: white;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.2s;
+}
+
+.leaderboard-item:hover {
+  transform: translateX(5px);
+}
+
+.rank {
+  width: 30px;
+  height: 30px;
+  background: var(--primary-light);
+  color: var(--primary-dark);
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  margin-right: 1rem;
+}
+
+.player-name {
+  flex: 1;
+  font-weight: 600;
+  color: var(--gray-800);
+}
+
+.player-score {
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.game-quote {
+  margin-top: 1rem;
+  text-align: right;
+  font-style: italic;
+  color: var(--gray-500);
+}
+
+/* ----- Mode Selector ----- */
+.mode-selector {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.mode-selector button {
+  padding: 0.875rem 2rem;
+  border: 2px solid var(--gray-300);
+  background: white;
+  border-radius: 3rem;
+  font-weight: 600;
+  font-size: 1.125rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-sm);
+}
+
+.mode-selector button:hover {
+  border-color: var(--primary);
+  background: var(--primary-light);
+}
+
+.mode-selector button.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: white;
+  box-shadow: var(--shadow-md);
+}
+
+/* ----- Name Input ----- */
+.name-input-container {
+  max-width: 400px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.name-input {
+  padding: 1rem 1.5rem;
+  font-size: 1.125rem;
+  border: 2px solid var(--gray-200);
+  border-radius: var(--radius-lg);
+  transition: border-color 0.2s;
+  text-align: center;
+}
+
+.name-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-light);
+}
+
+.game-button {
+  background: var(--primary);
+  color: white;
+  border: none;
+  padding: 1rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: var(--shadow-md);
+}
+
+.game-button:hover {
+  background: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* ----- Game Area ----- */
+.game-area {
+  animation: fadeIn 0.3s ease;
+}
+
+.game-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.score, .streak, .riddle-count {
+  font-size: 1.25rem;
+  font-weight: 600;
+  padding: 0.5rem 1.25rem;
+  background: var(--gray-100);
+  border-radius: 2rem;
+}
+
+.streak-active {
+  background: var(--accent);
+  color: var(--gray-900);
+}
+
+.streak-bonus {
+  margin-left: 0.5rem;
+  font-size: 0.875rem;
+  background: var(--success);
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 1rem;
+}
+
+.back-button {
+  background: transparent;
+  border: 2px solid var(--gray-300);
+  color: var(--gray-600);
+  padding: 0.5rem 1.25rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 2rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-left: auto;
+}
+
+.back-button:hover {
+  background: var(--gray-100);
+  border-color: var(--gray-400);
+  color: var(--gray-800);
+  transform: translateX(-3px);
+}
+
+.riddle-conversation {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.speech-bubble {
+  padding: 1rem 1.5rem;
+  border-radius: 1.5rem;
+  max-width: 80%;
+  font-size: 1.25rem;
+}
+
+.setter {
+  background: var(--primary-light);
+  color: var(--primary-dark);
+  align-self: flex-start;
+  border-bottom-left-radius: 0.25rem;
+}
+
+.responder {
+  background: var(--gray-200);
+  color: var(--gray-800);
+  align-self: flex-end;
+  border-bottom-right-radius: 0.25rem;
+}
+
+.riddle-box {
+  background: white;
+  border: 2px dashed var(--primary);
+  border-radius: var(--radius-xl);
+  padding: 2rem;
+  margin: 1.5rem 0;
+  text-align: center;
+  box-shadow: var(--shadow-md);
+}
+
+.riddle-text {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: var(--gray-900);
+  line-height: 1.4;
+}
+
+.riddle-hint {
+  margin-top: 1rem;
+  font-size: 1rem;
+  color: var(--gray-600);
+  font-style: italic;
+}
+
+.options-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin: 2rem 0;
+}
+
+.option-btn {
+  padding: 1rem;
+  background: white;
+  border: 2px solid var(--gray-200);
+  border-radius: var(--radius);
+  font-size: 1.125rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.option-btn:hover:not(:disabled) {
+  border-color: var(--primary);
+  background: var(--primary-light);
+  transform: scale(1.02);
+}
+
+.option-btn.selected {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: white;
+}
+
+.option-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.feedback {
+  text-align: center;
+  padding: 1rem;
+  border-radius: var(--radius);
+  font-size: 1.25rem;
+  font-weight: 500;
+  animation: slideUp 0.3s ease;
+}
+
+.feedback.correct {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.feedback.incorrect {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+/* ----- Game Over ----- */
+.game-over {
+  text-align: center;
+  padding: 2rem;
+  animation: fadeIn 0.5s ease;
+}
+
+.game-over h3 {
+  font-size: 2rem;
+  color: var(--primary);
+  margin-bottom: 1.5rem;
+}
+
+.final-score, .correct-count {
+  font-size: 1.25rem;
+  margin: 1rem 0;
+}
+
+.final-score strong, .correct-count strong {
+  font-size: 2rem;
+  margin-left: 1rem;
+  color: var(--primary);
+}
+
+.perfect-game {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--accent);
+  margin: 1.5rem 0;
+  animation: pulse 1s infinite;
+}
+
+.game-over-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.play-again-btn, .reset-btn {
+  padding: 0.875rem 2rem;
+  font-size: 1.125rem;
+  font-weight: 600;
+  border: none;
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.play-again-btn {
+  background: var(--primary);
+  color: white;
+}
+
+.reset-btn {
+  background: var(--gray-200);
+  color: var(--gray-700);
+}
+
+.play-again-btn:hover, .reset-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+/* ----- Animations & Effects ----- */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.correct-animation {
+  animation: correctPulse 0.5s ease;
+}
+
+@keyframes correctPulse {
+  0% { box-shadow: 0 0 0 0 rgba(42, 157, 143, 0.7); }
+  70% { box-shadow: 0 0 0 20px rgba(42, 157, 143, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(42, 157, 143, 0); }
+}
+
+.confetti-container, .fireworks-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+.confetti {
+  position: absolute;
+  top: -10%;
+  animation: confettiFall 3s linear forwards;
+}
+
+@keyframes confettiFall {
+  to { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+}
+
+.firework {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  animation: fireworkExplode 2s ease-out forwards;
+}
+
+@keyframes fireworkExplode {
+  0% { transform: scale(1); opacity: 1; }
+  100% { transform: scale(20); opacity: 0; }
+}
+
+/* ----- Responsive ----- */
+@media (max-width: 768px) {
+  .game-content { padding: 1.5rem; }
+  .game-content h2 { font-size: 2rem; }
+  .options-container { grid-template-columns: 1fr; }
+  .game-header { flex-direction: column; align-items: stretch; }
+  .back-button { margin-left: 0; justify-content: center; }
+  .mode-selector { flex-direction: column; }
+  .mode-selector button { width: 100%; }
+  .speech-bubble { max-width: 100%; }
+  .riddle-text { font-size: 1.25rem; }
+  .game-over-buttons { flex-direction: column; }
+}
