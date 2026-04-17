@@ -1,12 +1,35 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { toast, Toaster } from 'react-hot-toast';
 import './Accommodation.css';
-
-// Import local background image
 import accommodationHeroBg from '../assets/images/accommodation-hero-bg.jpg';
+import { accommodationService } from '../services/accommodationService';
+
+// Booking form validation schema
+const bookingSchema = z.object({
+  full_name: z.string().min(2, 'Full name is required'),
+  email: z.string().email('Invalid email address'),
+  phone: z.string().min(8, 'Valid phone number required'),
+  student_id: z.string().min(1, 'Student ID is required'),
+  institution: z.string().min(1, 'Please select an institution'),
+  move_in_date: z.string().min(1, 'Move-in date is required'),
+  duration: z.string().min(1, 'Duration is required'),
+  preferred_visit: z.string().optional(),
+  terms: z.literal(true, {
+    errorMap: () => ({ message: 'You must accept the terms' }),
+  }),
+  deposit: z.literal(true, {
+    errorMap: () => ({ message: 'You must acknowledge the deposit' }),
+  }),
+});
 
 function Accommodation() {
   const navigate = useNavigate();
+  const [listings, setListings] = useState([]);
+  const [filteredListings, setFilteredListings] = useState([]);
   const [selectedLocation, setSelectedLocation] = useState('all');
   const [priceRange, setPriceRange] = useState('all');
   const [selectedType, setSelectedType] = useState('all');
@@ -14,26 +37,78 @@ function Accommodation() {
   const [selectedProperty, setSelectedProperty] = useState(null);
   const [bookingSubmitted, setBookingSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitError, setSubmitError] = useState('');
   const [myBookings, setMyBookings] = useState([]);
   const [activeTab, setActiveTab] = useState('listings');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingListings, setIsLoadingListings] = useState(true);
+  const [isLoadingBookings, setIsLoadingBookings] = useState(false);
+  const [fetchError, setFetchError] = useState('');
 
-  // Check if user is logged in
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(bookingSchema),
+    defaultValues: {
+      preferred_visit: '',
+    },
+  });
+
+  // Check authentication
   useEffect(() => {
     const token = localStorage.getItem('access_token');
     setIsLoggedIn(!!token);
   }, []);
 
-  // Load user's bookings from backend when logged in and on bookings tab
+  // Fetch listings from backend
+  useEffect(() => {
+    const fetchListings = async () => {
+      setIsLoadingListings(true);
+      setFetchError('');
+      try {
+        const data = await accommodationService.getListings();
+        setListings(data);
+        setFilteredListings(data);
+      } catch (error) {
+        console.error('Failed to fetch listings:', error);
+        setFetchError('Unable to load accommodations. Please try again later.');
+        toast.error('Failed to load listings');
+      } finally {
+        setIsLoadingListings(false);
+      }
+    };
+    fetchListings();
+  }, []);
+
+  // Apply filters client‑side
+  useEffect(() => {
+    let filtered = [...listings];
+    if (selectedLocation !== 'all') {
+      filtered = filtered.filter(l => l.location === selectedLocation);
+    }
+    if (priceRange === 'low') {
+      filtered = filtered.filter(l => l.price_value < 700);
+    } else if (priceRange === 'medium') {
+      filtered = filtered.filter(l => l.price_value >= 700 && l.price_value <= 850);
+    } else if (priceRange === 'high') {
+      filtered = filtered.filter(l => l.price_value > 850);
+    }
+    if (selectedType !== 'all') {
+      filtered = filtered.filter(l => l.room_type === selectedType);
+    }
+    setFilteredListings(filtered);
+  }, [listings, selectedLocation, priceRange, selectedType]);
+
+  // Fetch user bookings when on bookings tab
   useEffect(() => {
     if (isLoggedIn && activeTab === 'bookings') {
       fetchMyBookings();
     }
   }, [isLoggedIn, activeTab]);
 
-  // Check for pending booking after login
+  // Handle pending booking after login
   useEffect(() => {
     const pendingBooking = sessionStorage.getItem('pendingBooking');
     if (pendingBooking && isLoggedIn) {
@@ -45,253 +120,56 @@ function Accommodation() {
   }, [isLoggedIn]);
 
   const fetchMyBookings = async () => {
-    const token = localStorage.getItem('access_token');
-    if (!token) return;
-    
-    setIsLoading(true);
+    setIsLoadingBookings(true);
     try {
-      // ✅ FIXED: include /api/v1
-      const res = await fetch(`${process.env.REACT_APP_API_URL}/api/v1/accommodation/my-bookings`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      
-      if (res.ok) {
-        const data = await res.json();
-        setMyBookings(data);
-      }
+      const data = await accommodationService.getMyBookings();
+      setMyBookings(data);
     } catch (error) {
-      console.error('Failed to fetch bookings');
+      toast.error('Failed to load your bookings');
     } finally {
-      setIsLoading(false);
+      setIsLoadingBookings(false);
     }
   };
 
-  // Sample accommodation listings (unchanged)
-  const accommodations = [
-    {
-      id: 1,
-      name: 'Sunrise Student Village',
-      location: 'Maseru',
-      area: 'Pioneer Mall Area',
-      price: 'M650/month',
-      priceValue: 650,
-      type: 'shared',
-      distance: '5 min to NUL',
-      amenities: ['WiFi', '24/7 Security', 'Common Room', 'Kitchen', 'Laundry'],
-      available: true,
-      rooms: 12,
-      rating: 4.8,
-      image: '🏠',
-      description: 'Modern student accommodation with all amenities. Close to shops and transport.'
-    },
-    {
-      id: 2,
-      name: 'Mabatho Residence',
-      location: 'Maseru',
-      area: 'City Center',
-      price: 'M850/month',
-      priceValue: 850,
-      type: 'private',
-      distance: '10 min to town',
-      amenities: ['WiFi', 'Parking', 'Study Room', 'Security', 'Water Included'],
-      available: true,
-      rooms: 8,
-      rating: 4.5,
-      image: '🏘️',
-      description: 'Private rooms with study desks. Perfect for focused students.'
-    },
-    {
-      id: 3,
-      name: 'Thaba Bosiu Flats',
-      location: 'Maseru',
-      area: 'Thaba Bosiu',
-      price: 'M550/month',
-      priceValue: 550,
-      type: 'shared',
-      distance: '15 min bus to NUL',
-      amenities: ['WiFi', 'Security', 'Shared Kitchen'],
-      available: true,
-      rooms: 6,
-      rating: 4.2,
-      image: '🏢',
-      description: 'Affordable shared accommodation with basic amenities.'
-    },
-    {
-      id: 4,
-      name: 'Leribe Student Housing',
-      location: 'Leribe',
-      area: 'Hlotse',
-      price: 'M480/month',
-      priceValue: 480,
-      type: 'shared',
-      distance: 'Near LEC',
-      amenities: ['WiFi', 'Water', 'Security', 'Study Area'],
-      available: true,
-      rooms: 10,
-      rating: 4.3,
-      image: '🏠',
-      description: 'Comfortable housing for LEC and other institutions students.'
-    },
-    {
-      id: 5,
-      name: 'Butha-Buthe Apartments',
-      location: 'Butha-Buthe',
-      area: 'Town Center',
-      price: 'M700/month',
-      priceValue: 700,
-      type: 'private',
-      distance: 'Central location',
-      amenities: ['WiFi', 'Parking', 'Security', 'Private Bathroom'],
-      available: false,
-      rooms: 5,
-      rating: 4.7,
-      image: '🏘️',
-      description: 'Private apartments with all utilities included.'
-    },
-    {
-      id: 6,
-      name: 'Mohale\'s Hoek Lodge',
-      location: 'Mohale\'s Hoek',
-      area: 'Central',
-      price: 'M600/month',
-      priceValue: 600,
-      type: 'private',
-      distance: 'Near schools',
-      amenities: ['WiFi', 'Security', 'Parking', 'Meal Plan Option'],
-      available: true,
-      rooms: 8,
-      rating: 4.6,
-      image: '🏨',
-      description: 'Lodge-style accommodation with meal options available.'
-    },
-    {
-      id: 7,
-      name: 'NUL Campus View',
-      location: 'Maseru',
-      area: 'Roma',
-      price: 'M950/month',
-      priceValue: 950,
-      type: 'private',
-      distance: 'Walking distance to NUL',
-      amenities: ['WiFi', '24/7 Security', 'Study Room', 'Laundry', 'Parking'],
-      available: true,
-      rooms: 15,
-      rating: 4.9,
-      image: '🏫',
-      description: 'Premium accommodation right next to NUL campus.'
-    },
-    {
-      id: 8,
-      name: 'Teyateyaneng Student Homes',
-      location: 'Teyateyaneng',
-      area: 'Town',
-      price: 'M450/month',
-      priceValue: 450,
-      type: 'shared',
-      distance: 'Near bus stop',
-      amenities: ['WiFi', 'Shared Kitchen', 'Basic Security'],
-      available: true,
-      rooms: 8,
-      rating: 4.0,
-      image: '🏠',
-      description: 'Budget-friendly shared accommodation for students.'
-    }
-  ];
-
-  // Filter accommodations
-  const filteredAccommodations = accommodations.filter(acc => {
-    if (selectedLocation !== 'all' && acc.location !== selectedLocation) return false;
-    if (priceRange === 'low' && acc.priceValue > 700) return false;
-    if (priceRange === 'medium' && (acc.priceValue < 700 || acc.priceValue > 850)) return false;
-    if (priceRange === 'high' && acc.priceValue < 850) return false;
-    if (selectedType !== 'all' && acc.type !== selectedType) return false;
-    return true;
-  });
-
-  const locations = ['all', ...new Set(accommodations.map(a => a.location))];
+  const locations = ['all', ...new Set(listings.map(l => l.location))];
 
   const handleBookNow = (property) => {
     if (!isLoggedIn) {
-      const confirmLogin = window.confirm(
-        'You need to be logged in to book accommodation.\n\nWould you like to log in or create an account?'
-      );
-      if (confirmLogin) {
-        sessionStorage.setItem('pendingBooking', JSON.stringify(property));
-        navigate('/login', { state: { from: '/accommodation', action: 'book', propertyId: property.id } });
-      }
+      toast.error('Please log in to book accommodation');
+      sessionStorage.setItem('pendingBooking', JSON.stringify(property));
+      navigate('/login', { state: { from: '/accommodation', action: 'book', propertyId: property.id } });
       return;
     }
     setSelectedProperty(property);
-    setSubmitError('');
+    reset();
     setShowBookingModal(true);
   };
 
-  const handleBookingSubmit = async (e) => {
-    e.preventDefault();
-    
+  const onBookingSubmit = async (formData) => {
     if (!isLoggedIn) {
-      alert('Please log in to complete your booking.');
-      navigate('/login', { state: { from: '/accommodation' } });
+      toast.error('Session expired. Please log in again.');
+      navigate('/login');
       return;
     }
-    
     setIsSubmitting(true);
-    setSubmitError('');
-    
-    const formData = {
-      accommodation_id: selectedProperty.id,
-      full_name: e.target.full_name.value,
-      email: e.target.email.value,
-      phone: e.target.phone.value,
-      student_id: e.target.student_id.value,
-      institution: e.target.institution.value,
-      move_in_date: e.target.move_in_date.value,
-      duration: e.target.duration.value
-    };
-    
     try {
-      const token = localStorage.getItem('access_token');
-      // ✅ FIXED: include /api/v1
-      const res = await fetch(`${process.env.REACT_APP_API_URL}/api/v1/accommodation/bookings`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(formData)
-      });
-      
-      const data = await res.json();
-      
-      if (res.ok) {
-        if (activeTab === 'bookings') {
-          fetchMyBookings();
-        }
-        setBookingSubmitted(true);
-        setTimeout(() => {
-          setShowBookingModal(false);
-          setBookingSubmitted(false);
-          setSelectedProperty(null);
-          e.target.reset();
-        }, 3000);
-      } else {
-        if (res.status === 401) {
-          setSubmitError('Your session has expired. Please log in again.');
-          setTimeout(() => navigate('/login'), 2000);
-        } else if (res.status === 400) {
-          setSubmitError(data.detail || 'Please check your information and try again.');
-        } else if (res.status === 409) {
-          setSubmitError('This accommodation is no longer available. Please try another one.');
-        } else if (res.status === 429) {
-          setSubmitError('Too many requests. Please wait a moment before trying again.');
-        } else {
-          setSubmitError('Unable to complete your booking. Please try again later.');
-        }
+      const payload = {
+        accommodation_id: selectedProperty.id,
+        ...formData,
+      };
+      await accommodationService.createBooking(payload);
+      setBookingSubmitted(true);
+      toast.success('Booking request submitted!');
+      if (activeTab === 'bookings') {
+        fetchMyBookings();
       }
+      setTimeout(() => {
+        setShowBookingModal(false);
+        setBookingSubmitted(false);
+        setSelectedProperty(null);
+      }, 3000);
     } catch (error) {
-      setSubmitError('Unable to connect to the server. Please check your internet connection and try again.');
+      toast.error(error.message || 'Booking failed. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -299,15 +177,15 @@ function Accommodation() {
 
   return (
     <div className="accommodation-page">
+      <Toaster position="top-center" toastOptions={{ duration: 4000 }} />
       <div className="accommodation-container">
         {/* Hero Section */}
-        <div 
+        <div
           className="accommodation-hero"
           style={{
-            backgroundImage: `linear-gradient(135deg, rgba(102, 126, 234, 0.7), rgba(118, 75, 162, 0.7)), url(${accommodationHeroBg})`,
+            backgroundImage: `linear-gradient(135deg, rgba(42, 157, 143, 0.85), rgba(38, 70, 83, 0.85)), url(${accommodationHeroBg})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat'
           }}
         >
           <div className="hero-icon">🏠</div>
@@ -317,17 +195,17 @@ function Accommodation() {
 
         {/* Tabs */}
         <div className="accommodation-tabs">
-          <button 
+          <button
             className={`tab ${activeTab === 'listings' ? 'active' : ''}`}
             onClick={() => setActiveTab('listings')}
           >
-            Find Accommodation
+            🔍 Find Accommodation
           </button>
-          <button 
+          <button
             className={`tab ${activeTab === 'bookings' ? 'active' : ''}`}
             onClick={() => setActiveTab('bookings')}
           >
-            My Bookings ({myBookings.length})
+            📋 My Bookings {myBookings.length > 0 && `(${myBookings.length})`}
           </button>
         </div>
 
@@ -344,17 +222,15 @@ function Accommodation() {
                   ))}
                 </select>
               </div>
-
               <div className="filter-group">
                 <label>💰 Price Range</label>
                 <select value={priceRange} onChange={(e) => setPriceRange(e.target.value)}>
                   <option value="all">All Prices</option>
                   <option value="low">Under M700</option>
-                  <option value="medium">M700 - M850</option>
+                  <option value="medium">M700 – M850</option>
                   <option value="high">Above M850</option>
                 </select>
               </div>
-
               <div className="filter-group">
                 <label>🏘️ Room Type</label>
                 <select value={selectedType} onChange={(e) => setSelectedType(e.target.value)}>
@@ -366,83 +242,124 @@ function Accommodation() {
             </div>
 
             <div className="results-count">
-              Found {filteredAccommodations.length} accommodation{filteredAccommodations.length !== 1 ? 's' : ''}
+              Found <strong>{filteredListings.length}</strong> accommodation{filteredListings.length !== 1 ? 's' : ''}
             </div>
 
-            <div className="accommodation-grid">
-              {filteredAccommodations.map(acc => (
-                <div key={acc.id} className="accommodation-card">
-                  <div className="card-image">
-                    <span className="property-icon">{acc.image}</span>
-                    {!acc.available && <span className="unavailable-badge">Fully Booked</span>}
-                    <div className="rating-badge">⭐ {acc.rating}</div>
+            {isLoadingListings ? (
+              <div className="loading-grid">
+                {[...Array(6)].map((_, i) => (
+                  <div key={i} className="skeleton-card">
+                    <div className="skeleton-image"></div>
+                    <div className="skeleton-text"></div>
+                    <div className="skeleton-text short"></div>
+                    <div className="skeleton-text"></div>
                   </div>
-                  <div className="card-content">
-                    <div className="card-header">
-                      <h3>{acc.name}</h3>
-                      <span className="property-type">{acc.type === 'shared' ? 'Shared' : 'Private'}</span>
-                    </div>
-                    <p className="location">📍 {acc.location} • {acc.area}</p>
-                    <p className="distance">🚶 {acc.distance}</p>
-                    <p className="price">{acc.price}<span>/month</span></p>
-                    <div className="amenities">
-                      {acc.amenities.slice(0, 3).map((item, idx) => (
-                        <span key={idx} className="amenity-tag">{item}</span>
-                      ))}
-                      {acc.amenities.length > 3 && (
-                        <span className="amenity-tag more">+{acc.amenities.length - 3}</span>
-                      )}
-                    </div>
-                    <p className="description">{acc.description.substring(0, 80)}...</p>
-                    <button 
-                      className={`book-btn ${!acc.available ? 'disabled' : ''}`}
-                      onClick={() => handleBookNow(acc)}
-                      disabled={!acc.available}
-                    >
-                      {acc.available ? 'Book Now →' : 'Currently Unavailable'}
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {filteredAccommodations.length === 0 && (
+                ))}
+              </div>
+            ) : fetchError ? (
+              <div className="error-state">
+                <div className="error-icon">⚠️</div>
+                <h3>Something went wrong</h3>
+                <p>{fetchError}</p>
+                <button onClick={() => window.location.reload()} className="retry-btn">
+                  Try Again
+                </button>
+              </div>
+            ) : filteredListings.length === 0 ? (
               <div className="empty-state">
                 <div className="empty-icon">🔍</div>
                 <h3>No accommodations found</h3>
                 <p>Try adjusting your filters to see more options</p>
-                <button onClick={() => {
-                  setSelectedLocation('all');
-                  setPriceRange('all');
-                  setSelectedType('all');
-                }} className="reset-btn">
+                <button
+                  onClick={() => {
+                    setSelectedLocation('all');
+                    setPriceRange('all');
+                    setSelectedType('all');
+                  }}
+                  className="reset-btn"
+                >
                   Reset Filters
                 </button>
               </div>
+            ) : (
+              <div className="accommodation-grid">
+                {filteredListings.map(acc => (
+                  <div key={acc.id} className="accommodation-card">
+                    <div className="card-image">
+                      {acc.image_url ? (
+                        <img src={acc.image_url} alt={acc.name} className="property-image" />
+                      ) : (
+                        <div className="image-placeholder">
+                          <span className="placeholder-icon">🏠</span>
+                          <span className="placeholder-text">Photo coming soon</span>
+                        </div>
+                      )}
+                      {!acc.available && <span className="unavailable-badge">Fully Booked</span>}
+                      <div className="rating-badge">
+                        <span>⭐</span> {acc.rating?.toFixed(1) || '4.5'}
+                      </div>
+                    </div>
+                    <div className="card-content">
+                      <div className="card-header">
+                        <h3>{acc.name}</h3>
+                        <span className={`property-type ${acc.room_type}`}>
+                          {acc.room_type === 'shared' ? 'Shared' : 'Private'}
+                        </span>
+                      </div>
+                      <p className="location">
+                        <span className="icon">📍</span> {acc.location} • {acc.area || acc.neighborhood}
+                      </p>
+                      <p className="distance">
+                        <span className="icon">🚶</span> {acc.distance || 'Near campus'}
+                      </p>
+                      <p className="price">
+                        M{acc.price_value}<span>/month</span>
+                      </p>
+                      <div className="amenities">
+                        {(acc.amenities || []).slice(0, 3).map((item, idx) => (
+                          <span key={idx} className="amenity-tag">{item}</span>
+                        ))}
+                        {(acc.amenities || []).length > 3 && (
+                          <span className="amenity-tag more">+{acc.amenities.length - 3}</span>
+                        )}
+                      </div>
+                      <p className="description">{acc.description?.substring(0, 80)}...</p>
+                      <button
+                        className={`book-btn ${!acc.available ? 'disabled' : ''}`}
+                        onClick={() => handleBookNow(acc)}
+                        disabled={!acc.available}
+                      >
+                        {acc.available ? 'Book Now →' : 'Currently Unavailable'}
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
             )}
 
+            {/* How It Works */}
             <div className="info-section">
               <h3>📋 How It Works</h3>
               <div className="steps">
                 <div className="step">
                   <div className="step-number">1</div>
                   <h4>Browse Listings</h4>
-                  <p>Find accommodation that fits your needs</p>
+                  <p>Find accommodation that fits your needs and budget.</p>
                 </div>
                 <div className="step">
                   <div className="step-number">2</div>
                   <h4>Submit Booking</h4>
-                  <p>Fill in your details and preferred move-in date</p>
+                  <p>Fill in your details and preferred move‑in date.</p>
                 </div>
                 <div className="step">
                   <div className="step-number">3</div>
                   <h4>Property Visit</h4>
-                  <p>Schedule a visit to view the property</p>
+                  <p>Schedule a visit to view the property in person.</p>
                 </div>
                 <div className="step">
                   <div className="step-number">4</div>
-                  <h4>Sign Contract</h4>
-                  <p>Complete paperwork and move in</p>
+                  <h4>Sign & Move In</h4>
+                  <p>Complete paperwork and settle into your new home.</p>
                 </div>
               </div>
             </div>
@@ -456,13 +373,16 @@ function Accommodation() {
               <div className="login-prompt">
                 <div className="login-icon">🔐</div>
                 <h3>Login Required</h3>
-                <p>Please log in to view your bookings</p>
+                <p>Please log in to view your bookings.</p>
                 <button onClick={() => navigate('/login')} className="login-prompt-btn">
                   Login / Sign Up
                 </button>
               </div>
-            ) : isLoading ? (
-              <div className="loading-state">Loading your bookings...</div>
+            ) : isLoadingBookings ? (
+              <div className="loading-state">
+                <div className="spinner"></div>
+                <p>Loading your bookings...</p>
+              </div>
             ) : myBookings.length > 0 ? (
               <div className="bookings-list">
                 {myBookings.map(booking => (
@@ -470,42 +390,42 @@ function Accommodation() {
                     <div className="booking-header">
                       <div className="booking-icon">🏠</div>
                       <div className="booking-info">
-                        <h3>{booking.propertyName || booking.accommodation?.name || 'Accommodation'}</h3>
-                        <p>Booking ID: {booking.id}</p>
+                        <h3>{booking.accommodation?.name || 'Accommodation'}</h3>
+                        <p className="booking-id">Booking #{booking.id}</p>
                       </div>
                       <span className={`booking-status ${booking.status}`}>
-                        {booking.status === 'pending' ? 'Pending' : booking.status === 'confirmed' ? 'Confirmed' : booking.status}
+                        {booking.status}
                       </span>
                     </div>
                     <div className="booking-details">
                       <div className="detail-row">
-                        <span>Student:</span>
-                        <strong>{booking.fullName}</strong>
+                        <span>Student</span>
+                        <strong>{booking.full_name}</strong>
                       </div>
                       <div className="detail-row">
-                        <span>Student ID:</span>
-                        <span>{booking.studentId}</span>
+                        <span>Student ID</span>
+                        <span>{booking.student_id}</span>
                       </div>
                       <div className="detail-row">
-                        <span>Institution:</span>
+                        <span>Institution</span>
                         <span>{booking.institution}</span>
                       </div>
                       <div className="detail-row">
-                        <span>Move-in Date:</span>
-                        <span>{booking.moveInDate}</span>
+                        <span>Move‑in Date</span>
+                        <span>{booking.move_in_date}</span>
                       </div>
                       <div className="detail-row">
-                        <span>Duration:</span>
+                        <span>Duration</span>
                         <span>{booking.duration}</span>
                       </div>
                       <div className="detail-row">
-                        <span>Booking Date:</span>
-                        <span>{booking.bookingDate?.split('T')[0] || booking.bookingDate}</span>
+                        <span>Booked on</span>
+                        <span>{new Date(booking.created_at).toLocaleDateString()}</span>
                       </div>
                     </div>
                     <div className="booking-actions">
-                      <button className="contact-btn">Contact Landlord</button>
-                      <button className="view-details-btn">View Details</button>
+                      <button className="contact-btn">📞 Contact Landlord</button>
+                      <button className="view-details-btn">👁️ View Details</button>
                     </div>
                   </div>
                 ))}
@@ -514,7 +434,7 @@ function Accommodation() {
               <div className="empty-state">
                 <div className="empty-icon">📋</div>
                 <h3>No Bookings Yet</h3>
-                <p>Browse available accommodations and make your first booking</p>
+                <p>Browse available accommodations and make your first booking.</p>
                 <button onClick={() => setActiveTab('listings')} className="browse-btn">
                   Browse Accommodations
                 </button>
@@ -529,27 +449,27 @@ function Accommodation() {
           <div className="faq-grid">
             <div className="faq-item">
               <h3>How do I book accommodation?</h3>
-              <p>Browse listings, click "Book Now" on your preferred property, then log in or create an account to complete your booking.</p>
+              <p>Browse listings, click "Book Now" and fill out the form. We'll contact you to arrange a viewing.</p>
             </div>
             <div className="faq-item">
               <h3>Is there a deposit required?</h3>
-              <p>Most properties require a refundable deposit equal to one month's rent. This is specified during booking.</p>
+              <p>Most properties require a refundable deposit equal to one month's rent.</p>
             </div>
             <div className="faq-item">
               <h3>Can I view the property before booking?</h3>
-              <p>Yes! After submitting a booking request, we'll help arrange a property visit before finalizing the contract.</p>
+              <p>Yes! After submitting a booking request, we'll help arrange a property visit.</p>
             </div>
             <div className="faq-item">
               <h3>What documents do I need?</h3>
-              <p>Student ID, proof of registration, and a valid ID/passport are required for all bookings.</p>
+              <p>Student ID, proof of registration, and a valid ID/passport.</p>
             </div>
             <div className="faq-item">
               <h3>Are utilities included?</h3>
-              <p>Most accommodations include water and basic WiFi. Electricity may be separate - check individual listings.</p>
+              <p>Varies by property. Check individual listings for details.</p>
             </div>
             <div className="faq-item">
               <h3>Can I cancel my booking?</h3>
-              <p>Cancellation policies vary by property. Contact our support team for assistance with cancellations.</p>
+              <p>Cancellation policies vary. Contact support for assistance.</p>
             </div>
           </div>
         </div>
@@ -560,73 +480,86 @@ function Accommodation() {
         <div className="modal-overlay" onClick={() => setShowBookingModal(false)}>
           <div className="booking-modal" onClick={(e) => e.stopPropagation()}>
             <button className="close-modal" onClick={() => setShowBookingModal(false)}>✕</button>
-            
             {!bookingSubmitted ? (
               <>
                 <h2>Book {selectedProperty.name}</h2>
                 <div className="booking-summary">
                   <p><strong>📍 Location:</strong> {selectedProperty.location}</p>
-                  <p><strong>💰 Price:</strong> {selectedProperty.price}</p>
-                  <p><strong>🏘️ Type:</strong> {selectedProperty.type === 'shared' ? 'Shared Room' : 'Private Room'}</p>
+                  <p><strong>💰 Price:</strong> M{selectedProperty.price_value}/month</p>
+                  <p><strong>🏘️ Type:</strong> {selectedProperty.room_type === 'shared' ? 'Shared Room' : 'Private Room'}</p>
                 </div>
-                
-                {submitError && (
-                  <div className="error-message">
-                    {submitError}
-                  </div>
-                )}
-                
-                <form onSubmit={handleBookingSubmit} className="booking-form">
+                <form onSubmit={handleSubmit(onBookingSubmit)} className="booking-form">
                   <div className="form-row">
-                    <input type="text" name="full_name" placeholder="Full Name" required />
-                    <input type="email" name="email" placeholder="Email Address" required />
+                    <div className="input-group">
+                      <input {...register('full_name')} placeholder="Full Name" />
+                      {errors.full_name && <span className="error-text">{errors.full_name.message}</span>}
+                    </div>
+                    <div className="input-group">
+                      <input {...register('email')} placeholder="Email Address" type="email" />
+                      {errors.email && <span className="error-text">{errors.email.message}</span>}
+                    </div>
                   </div>
-                  
                   <div className="form-row">
-                    <input type="tel" name="phone" placeholder="Phone Number" required />
-                    <input type="text" name="student_id" placeholder="Student ID" required />
+                    <div className="input-group">
+                      <input {...register('phone')} placeholder="Phone Number" />
+                      {errors.phone && <span className="error-text">{errors.phone.message}</span>}
+                    </div>
+                    <div className="input-group">
+                      <input {...register('student_id')} placeholder="Student ID" />
+                      {errors.student_id && <span className="error-text">{errors.student_id.message}</span>}
+                    </div>
                   </div>
-                  
                   <div className="form-row">
-                    <select name="institution" required>
-                      <option value="">Select Institution</option>
-                      <option value="NUL">National University of Lesotho</option>
-                      <option value="LEC">Lesotho Evangelical Church</option>
-                      <option value="Limkokwing">Limkokwing University</option>
-                      <option value="Botho">Botho University</option>
-                      <option value="Other">Other Institution</option>
-                    </select>
-                    
-                    <input type="date" name="move_in_date" required />
+                    <div className="input-group">
+                      <select {...register('institution')}>
+                        <option value="">Select Institution</option>
+                        <option value="NUL">National University of Lesotho</option>
+                        <option value="LEC">Lesotho Evangelical Church</option>
+                        <option value="Limkokwing">Limkokwing University</option>
+                        <option value="Botho">Botho University</option>
+                        <option value="Other">Other Institution</option>
+                      </select>
+                      {errors.institution && <span className="error-text">{errors.institution.message}</span>}
+                    </div>
+                    <div className="input-group">
+                      <input type="date" {...register('move_in_date')} />
+                      {errors.move_in_date && <span className="error-text">{errors.move_in_date.message}</span>}
+                    </div>
                   </div>
-                  
                   <div className="form-row">
-                    <select name="duration" required>
-                      <option value="">Preferred Duration</option>
-                      <option value="1 month">1 month</option>
-                      <option value="3 months">3 months</option>
-                      <option value="6 months">6 months</option>
-                      <option value="12 months">12 months</option>
-                    </select>
-                    
-                    <select name="preferred_visit">
-                      <option value="">Preferred Visit Time</option>
-                      <option value="morning">Morning (9am - 12pm)</option>
-                      <option value="afternoon">Afternoon (2pm - 5pm)</option>
-                      <option value="evening">Evening (5pm - 7pm)</option>
-                    </select>
+                    <div className="input-group">
+                      <select {...register('duration')}>
+                        <option value="">Preferred Duration</option>
+                        <option value="1 month">1 month</option>
+                        <option value="3 months">3 months</option>
+                        <option value="6 months">6 months</option>
+                        <option value="12 months">12 months</option>
+                      </select>
+                      {errors.duration && <span className="error-text">{errors.duration.message}</span>}
+                    </div>
+                    <div className="input-group">
+                      <select {...register('preferred_visit')}>
+                        <option value="">Preferred Visit Time (Optional)</option>
+                        <option value="morning">Morning (9am – 12pm)</option>
+                        <option value="afternoon">Afternoon (2pm – 5pm)</option>
+                        <option value="evening">Evening (5pm – 7pm)</option>
+                      </select>
+                    </div>
                   </div>
-                  
-                  <div className="checkbox">
-                    <input type="checkbox" required />
-                    <span>I confirm that I have read and agree to the booking terms and conditions</span>
+                  <div className="checkbox-group">
+                    <label className="checkbox-label">
+                      <input type="checkbox" {...register('terms')} />
+                      <span>I confirm that I have read and agree to the booking terms and conditions</span>
+                    </label>
+                    {errors.terms && <span className="error-text">{errors.terms.message}</span>}
                   </div>
-                  
-                  <div className="checkbox">
-                    <input type="checkbox" required />
-                    <span>I understand that a refundable deposit may be required upon confirmation</span>
+                  <div className="checkbox-group">
+                    <label className="checkbox-label">
+                      <input type="checkbox" {...register('deposit')} />
+                      <span>I understand that a refundable deposit may be required upon confirmation</span>
+                    </label>
+                    {errors.deposit && <span className="error-text">{errors.deposit.message}</span>}
                   </div>
-                  
                   <button type="submit" className="submit-booking-btn" disabled={isSubmitting}>
                     {isSubmitting ? 'Submitting...' : 'Submit Booking Request'}
                   </button>
@@ -636,15 +569,15 @@ function Accommodation() {
               <div className="success-message">
                 <div className="success-icon">✓</div>
                 <h3>Booking Request Submitted!</h3>
-                <p>Your request for {selectedProperty.name} has been received.</p>
+                <p>Your request for <strong>{selectedProperty.name}</strong> has been received.</p>
                 <p>We will contact you within 24 hours to arrange a property visit.</p>
                 <div className="next-steps">
                   <h4>What's Next?</h4>
                   <ul>
-                    <li>Check your email for confirmation</li>
-                    <li>We'll call to schedule a viewing</li>
-                    <li>Bring your student ID and documents to the viewing</li>
-                    <li>Sign contract and pay deposit to move in</li>
+                    <li>📧 Check your email for confirmation</li>
+                    <li>📞 We'll call to schedule a viewing</li>
+                    <li>🪪 Bring your student ID and documents to the viewing</li>
+                    <li>✍️ Sign contract and pay deposit to move in</li>
                   </ul>
                 </div>
               </div>
