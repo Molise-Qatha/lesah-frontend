@@ -28,9 +28,28 @@ function Login() {
         body: JSON.stringify(formData),
       });
       const data = await response.json();
+      
       if (response.ok) {
+        // Store tokens
         localStorage.setItem('access_token', data.access_token);
         localStorage.setItem('refresh_token', data.refresh_token);
+        
+        // Fetch the current user profile to get role and other details
+        try {
+          const userRes = await fetch(`${API_BASE}/api/v1/users/me`, {
+            headers: { 'Authorization': `Bearer ${data.access_token}` }
+          });
+          if (userRes.ok) {
+            const userData = await userRes.json();
+            // Store user object with role
+            localStorage.setItem('user', JSON.stringify(userData));
+          } else {
+            console.warn('Could not fetch user profile after login');
+          }
+        } catch (profileErr) {
+          console.warn('Failed to fetch user profile:', profileErr);
+        }
+        
         const from = location.state?.from || '/';
         navigate(from);
       } else {
