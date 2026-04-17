@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import Services from './components/Services';
@@ -15,7 +15,29 @@ import Terms from './pages/Terms';
 import Support from './pages/Support';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import AdminDashboard from './pages/AdminDashboard';
 import './App.css';
+
+// Protected route wrapper for admin-only pages
+function AdminRoute({ children }) {
+  const token = localStorage.getItem('access_token');
+  const userStr = localStorage.getItem('user');
+  
+  if (!token) {
+    return <Navigate to="/login" replace />;
+  }
+  
+  try {
+    const user = userStr ? JSON.parse(userStr) : null;
+    if (user?.role !== 'admin') {
+      return <Navigate to="/" replace />;
+    }
+  } catch {
+    return <Navigate to="/" replace />;
+  }
+  
+  return children;
+}
 
 function App() {
   return (
@@ -46,6 +68,15 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
 
+          {/* Admin Dashboard (Protected) */}
+          <Route 
+            path="/admin" 
+            element={
+              <AdminRoute>
+                <AdminDashboard />
+              </AdminRoute>
+            } 
+          />
           
           {/* Catch-all redirect to home (404 handling) */}
           <Route path="*" element={
