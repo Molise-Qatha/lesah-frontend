@@ -1,0 +1,232 @@
+/* AdminDashboard.css - Clean, professional admin interface */
+
+:root {
+  --primary: #2a9d8f;
+  --primary-dark: #21867a;
+  --primary-light: #e0f2f1;
+  --secondary: #264653;
+  --accent: #e9c46a;
+  --danger: #e76f51;
+  --success: #2a9d8f;
+  --warning: #f4a261;
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-300: #d1d5db;
+  --gray-400: #9ca3af;
+  --gray-500: #6b7280;
+  --gray-600: #4b5563;
+  --gray-700: #374151;
+  --gray-800: #1f2937;
+  --gray-900: #111827;
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  --radius: 0.5rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+}
+
+.admin-dashboard {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #eef2f3 100%);
+  padding: 2rem 1.5rem;
+}
+
+.admin-loading {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  color: var(--gray-600);
+  background: var(--gray-50);
+}
+
+/* ----- Header ----- */
+.admin-dashboard h1 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--gray-900);
+  margin-bottom: 2rem;
+  border-bottom: 2px solid var(--primary-light);
+  padding-bottom: 0.75rem;
+  display: inline-block;
+}
+
+/* ----- Stats Cards ----- */
+.stats-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.stat-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  text-align: center;
+  transition: all 0.2s ease;
+  border: 1px solid var(--gray-200);
+}
+
+.stat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--primary-light);
+}
+
+.stat-value {
+  display: block;
+  font-size: 3rem;
+  font-weight: 800;
+  color: var(--primary);
+  line-height: 1.2;
+}
+
+.stat-label {
+  font-size: 0.9375rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--gray-500);
+  font-weight: 600;
+}
+
+/* ----- Pending Sections ----- */
+.pending-loans {
+  background: white;
+  border-radius: var(--radius-xl);
+  padding: 2rem;
+  box-shadow: var(--shadow-lg);
+  margin-bottom: 2rem;
+  border: 1px solid var(--gray-200);
+}
+
+.pending-loans h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--gray-900);
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.pending-loans h2::before {
+  content: '📋';
+  font-size: 1.5rem;
+}
+
+/* ----- Table Styles ----- */
+.pending-loans table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9375rem;
+}
+
+.pending-loans th {
+  text-align: left;
+  padding: 1rem 0.75rem;
+  background: var(--gray-50);
+  color: var(--gray-700);
+  font-weight: 600;
+  border-bottom: 2px solid var(--gray-200);
+}
+
+.pending-loans td {
+  padding: 1rem 0.75rem;
+  border-bottom: 1px solid var(--gray-200);
+  color: var(--gray-700);
+}
+
+.pending-loans tr:last-child td {
+  border-bottom: none;
+}
+
+.pending-loans tr:hover td {
+  background: var(--gray-50);
+}
+
+/* ----- Action Buttons ----- */
+.approve-btn, .reject-btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: var(--radius);
+  font-weight: 600;
+  font-size: 0.8125rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-right: 0.5rem;
+}
+
+.approve-btn {
+  background: var(--success);
+  color: white;
+}
+
+.approve-btn:hover {
+  background: #1e7a6e;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.reject-btn {
+  background: var(--danger);
+  color: white;
+}
+
+.reject-btn:hover {
+  background: #c95d41;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+/* ----- Empty State ----- */
+.pending-loans p {
+  text-align: center;
+  padding: 3rem;
+  color: var(--gray-500);
+  font-size: 1.125rem;
+  background: var(--gray-50);
+  border-radius: var(--radius);
+}
+
+/* ----- Responsive Table (Mobile) ----- */
+@media (max-width: 768px) {
+  .admin-dashboard {
+    padding: 1rem;
+  }
+
+  .admin-dashboard h1 {
+    font-size: 2rem;
+  }
+
+  .stats-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .pending-loans {
+    padding: 1rem;
+    overflow-x: auto;
+  }
+
+  .pending-loans table {
+    min-width: 600px; /* Allow horizontal scroll on small screens */
+  }
+
+  .approve-btn, .reject-btn {
+    display: block;
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .stat-value {
+    font-size: 2.5rem;
+  }
+}
