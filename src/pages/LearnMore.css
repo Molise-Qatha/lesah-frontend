@@ -1,0 +1,267 @@
+/* LearnMore.css – Clean, informative, and on‑brand */
+
+.learn-more-page {
+  background: #f9fafb;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+/* Hero */
+.learn-more-hero {
+  background: linear-gradient(135deg, #2a9d8f 0%, #264653 100%);
+  color: white;
+  padding: 4rem 0;
+  text-align: center;
+}
+
+.learn-more-hero h1 {
+  font-size: 3rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+}
+
+.hero-subtitle {
+  font-size: 1.25rem;
+  opacity: 0.95;
+}
+
+/* Mission */
+.mission-section {
+  padding: 4rem 0;
+  background: white;
+}
+
+.mission-content h2 {
+  font-size: 2rem;
+  color: #1f2937;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.mission-text {
+  font-size: 1.125rem;
+  line-height: 1.7;
+  color: #4b5563;
+  max-width: 800px;
+  margin: 0 auto 1.5rem;
+  text-align: center;
+}
+
+/* Services Detail */
+.services-detail {
+  padding: 4rem 0;
+  background: #f3f4f6;
+}
+
+.services-detail h2 {
+  font-size: 2rem;
+  color: #1f2937;
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.service-detail-card {
+  background: white;
+  border-radius: 1rem;
+  padding: 2rem;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.service-detail-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 20px rgba(0,0,0,0.1);
+}
+
+.service-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.service-detail-card h3 {
+  font-size: 1.5rem;
+  color: #1f2937;
+  margin-bottom: 1rem;
+}
+
+.service-description {
+  color: #6b7280;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+.service-features {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 2rem;
+}
+
+.service-features li {
+  padding: 0.5rem 0;
+  color: #4b5563;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.service-features li:last-child {
+  border-bottom: none;
+}
+
+.service-link {
+  color: #2a9d8f;
+  font-weight: 600;
+  text-decoration: none;
+  display: inline-block;
+  transition: transform 0.2s;
+}
+
+.service-link:hover {
+  transform: translateX(5px);
+}
+
+/* Lilotho Section */
+.lilotho-section {
+  padding: 4rem 0;
+  background: white;
+}
+
+.lilotho-content {
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.lilotho-content h2 {
+  font-size: 2rem;
+  color: #1f2937;
+  margin-bottom: 1rem;
+}
+
+.lilotho-content p {
+  font-size: 1.125rem;
+  color: #4b5563;
+  line-height: 1.7;
+  margin-bottom: 1.5rem;
+}
+
+.lilotho-link {
+  color: #2a9d8f;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+/* Founder Section */
+.founder-section {
+  padding: 4rem 0;
+  background: #f3f4f6;
+}
+
+.founder-card {
+  background: white;
+  border-radius: 1rem;
+  padding: 3rem;
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+.founder-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.founder-card h3 {
+  font-size: 1.75rem;
+  color: #1f2937;
+  margin-bottom: 1.5rem;
+}
+
+.founder-card p {
+  font-size: 1.125rem;
+  line-height: 1.8;
+  color: #4b5563;
+  margin-bottom: 1rem;
+}
+
+.founder-name {
+  font-weight: 600;
+  color: #2a9d8f !important;
+}
+
+/* CTA Section */
+.cta-section {
+  padding: 4rem 0;
+  background: linear-gradient(135deg, #2a9d8f 0%, #264653 100%);
+  color: white;
+  text-align: center;
+}
+
+.cta-section h2 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.cta-section p {
+  font-size: 1.25rem;
+  margin-bottom: 2rem;
+  opacity: 0.95;
+}
+
+.cta-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.btn-primary, .btn-secondary {
+  padding: 0.875rem 2rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.btn-primary {
+  background: white;
+  color: #2a9d8f;
+}
+
+.btn-primary:hover {
+  background: #f0fdf4;
+  transform: translateY(-2px);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: white;
+  border: 2px solid white;
+}
+
+.btn-secondary:hover {
+  background: rgba(255,255,255,0.1);
+  transform: translateY(-2px);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .learn-more-hero h1 {
+    font-size: 2.25rem;
+  }
+  .services-grid {
+    grid-template-columns: 1fr;
+  }
+  .cta-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+}
