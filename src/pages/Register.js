@@ -17,6 +17,10 @@ function Register() {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
+  // New state for password visibility
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   const formatPhoneNumber = (phone) => {
     let cleaned = phone.replace(/\D/g, '');
     if (cleaned.length === 8) return '+266' + cleaned;
@@ -125,11 +129,46 @@ function Register() {
             <div className="form-row">
               <div className="form-group">
                 <label>Password</label>
-                <input type="password" name="password" placeholder="Create a strong password (8+ chars, upper, lower, number, special)" value={formData.password} onChange={handleChange} required />
+                <div className="password-input-wrapper">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    name="password"
+                    placeholder="Create a strong password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    required
+                  />
+                  <button
+                    type="button"
+                    className="toggle-password-btn"
+                    onClick={() => setShowPassword(!showPassword)}
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                  >
+                    {showPassword ? "🙈" : "👁️"}
+                  </button>
+                </div>
+                <small className="hint">8+ chars, upper, lower, number, special</small>
               </div>
               <div className="form-group">
                 <label>Confirm Password</label>
-                <input type="password" name="confirm_password" placeholder="Confirm your password" value={formData.confirm_password} onChange={handleChange} required />
+                <div className="password-input-wrapper">
+                  <input
+                    type={showConfirmPassword ? "text" : "password"}
+                    name="confirm_password"
+                    placeholder="Confirm your password"
+                    value={formData.confirm_password}
+                    onChange={handleChange}
+                    required
+                  />
+                  <button
+                    type="button"
+                    className="toggle-password-btn"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+                  >
+                    {showConfirmPassword ? "🙈" : "👁️"}
+                  </button>
+                </div>
               </div>
             </div>
             <div className="checkbox-group">
