@@ -116,7 +116,7 @@ function LearnMore() {
               I've watched friends stress over accommodation scams. I know what it's like to count every Maloti 
               at month‑end. This app is my promise to make student life in Lesotho just a little bit easier."
             </p>
-            <p className="founder-name">— Thato Qatha, NUL Student & LeSAH Founder</p>
+            <p className="founder-name">— Molise Qatha, NUL Student & LeSAH Founder</p>
           </div>
         </div>
       </section>
