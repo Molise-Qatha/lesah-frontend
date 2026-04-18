@@ -16,6 +16,7 @@ import Support from './pages/Support';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import AdminDashboard from './pages/AdminDashboard';
+import LearnMore from './pages/LearnMore';
 import './App.css';
 
 // Protected route wrapper for admin-only pages
@@ -59,6 +60,8 @@ function App() {
           <Route path="/accommodation" element={<Accommodation />} />
           <Route path="/loans" element={<Loans />} />
           <Route path="/delivery" element={<Delivery />} />
+          <Route path="/learn-more" element={<LearnMore />} />
+
           
           {/* Legal & Support Pages */}
           <Route path="/contact" element={<Contact />} />
