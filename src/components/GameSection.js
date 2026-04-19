@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { Howl } from 'howler';
 import './GameSection.css';
 
 function GameSection() {
@@ -19,42 +20,83 @@ function GameSection() {
   const [correctAnimation, setCorrectAnimation] = useState(false);
   const [totalRiddles] = useState(20);
   const [gameMode, setGameMode] = useState('lilotho'); // 'lilotho' or 'english'
-  
-  const correctSoundRef = useRef(null);
-  const wrongSoundRef = useRef(null);
-  const streakSoundRef = useRef(null);
+  const [timeLeft, setTimeLeft] = useState(5);
+  const [isLeaderboardLoading, setIsLeaderboardLoading] = useState(true);
 
-  // ----- Audio Setup -----
-  useEffect(() => {
-    const createBeep = (frequency, duration, type = 'sine') => {
+  const timerRef = useRef(null);
+  const currentRiddleRef = useRef(null);
+
+  // ----- Audio Setup with Howler.js -----
+  const correctSound = useMemo(() => {
+    return new Howl({
+      src: ['/sounds/correct.mp3'],
+      volume: 0.5,
+      onloaderror: () => console.warn('Correct sound failed to load, using fallback beep'),
+    });
+  }, []);
+
+  const wrongSound = useMemo(() => {
+    return new Howl({
+      src: ['/sounds/wrong.mp3'],
+      volume: 0.5,
+      onloaderror: () => console.warn('Wrong sound failed to load, using fallback beep'),
+    });
+  }, []);
+
+  const streakSound = useMemo(() => {
+    return new Howl({
+      src: ['/sounds/streak.mp3'],
+      volume: 0.6,
+      onloaderror: () => console.warn('Streak sound failed to load, using fallback beep'),
+    });
+  }, []);
+
+  // Fallback beep generators (used if sound files fail to load)
+  const fallbackBeep = (frequency, duration, type = 'sine') => {
+    try {
       const audioContext = new (window.AudioContext || window.webkitAudioContext)();
       const oscillator = audioContext.createOscillator();
       const gainNode = audioContext.createGain();
-      
       oscillator.connect(gainNode);
       gainNode.connect(audioContext.destination);
-      
       oscillator.frequency.value = frequency;
       oscillator.type = type;
       gainNode.gain.value = 0.3;
-      
       oscillator.start();
       gainNode.gain.exponentialRampToValueAtTime(0.00001, audioContext.currentTime + duration);
       oscillator.stop(audioContext.currentTime + duration);
-      
       audioContext.resume();
-    };
-    
-    correctSoundRef.current = () => createBeep(523.25, 0.3, 'sine');
-    wrongSoundRef.current = () => createBeep(220, 0.5, 'sawtooth');
-    streakSoundRef.current = (streakCount) => {
-      if (streakCount >= 3) {
-        createBeep(659.25, 0.2, 'sine');
-        setTimeout(() => createBeep(783.99, 0.2, 'sine'), 200);
-        setTimeout(() => createBeep(987.77, 0.3, 'sine'), 400);
-      }
-    };
-  }, []);
+    } catch (e) {
+      console.warn('Fallback beep failed:', e);
+    }
+  };
+
+  const playCorrectSound = () => {
+    if (correctSound.state() === 'loaded') {
+      correctSound.play();
+    } else {
+      fallbackBeep(523.25, 0.3, 'sine');
+    }
+  };
+
+  const playWrongSound = () => {
+    if (wrongSound.state() === 'loaded') {
+      wrongSound.play();
+    } else {
+      fallbackBeep(220, 0.5, 'sawtooth');
+    }
+  };
+
+  const playStreakSound = () => {
+    if (streakSound.state() === 'loaded') {
+      streakSound.play();
+    } else {
+      // Three-note rising arpeggio as fallback
+      fallbackBeep(659.25, 0.2, 'sine');
+      setTimeout(() => fallbackBeep(783.99, 0.2, 'sine'), 200);
+      setTimeout(() => fallbackBeep(987.77, 0.3, 'sine'), 400);
+    }
+  };
 
   // ----- Riddle Databases -----
   const lilothoRiddles = [
@@ -166,23 +208,58 @@ function GameSection() {
     return allOptions.sort(() => 0.5 - Math.random());
   };
 
-  // ----- Leaderboard Initialization -----
-  useEffect(() => {
-    const savedLeaderboard = localStorage.getItem('lilothoLeaderboard');
-    if (savedLeaderboard) {
-      setLeaderboard(JSON.parse(savedLeaderboard));
-    } else {
-      const sampleData = [
-        { name: "Thabo Mokoena", score: 450, correct: 9, date: "2026-03-23" },
-        { name: "Lerato Mofolo", score: 400, correct: 8, date: "2026-03-22" },
-        { name: "Mpho Letsie", score: 350, correct: 7, date: "2026-03-21" },
-        { name: "John Malefetsane", score: 300, correct: 6, date: "2026-03-20" },
-        { name: "Mary Ntsane", score: 250, correct: 5, date: "2026-03-19" }
-      ];
-      setLeaderboard(sampleData);
-      localStorage.setItem('lilothoLeaderboard', JSON.stringify(sampleData));
+  // ----- Fetch Real Leaderboard -----
+  const fetchLeaderboard = async () => {
+    setIsLeaderboardLoading(true);
+    try {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/api/v1/game/leaderboard?mode=${gameMode}&limit=10`);
+      if (res.ok) {
+        const data = await res.json();
+        setLeaderboard(data);
+      } else {
+        // Fallback to localStorage if API fails
+        const saved = localStorage.getItem('lilothoLeaderboard');
+        if (saved) setLeaderboard(JSON.parse(saved));
+      }
+    } catch {
+      const saved = localStorage.getItem('lilothoLeaderboard');
+      if (saved) setLeaderboard(JSON.parse(saved));
+    } finally {
+      setIsLeaderboardLoading(false);
     }
-  }, []);
+  };
+
+  useEffect(() => {
+    fetchLeaderboard();
+  }, [gameMode]);
+
+  // ----- Timer Logic -----
+  const startTimer = () => {
+    if (timerRef.current) clearInterval(timerRef.current);
+    setTimeLeft(5);
+    timerRef.current = setInterval(() => {
+      setTimeLeft(prev => {
+        if (prev <= 1) {
+          clearInterval(timerRef.current);
+          // Time's up – treat as wrong answer
+          if (currentRiddleRef.current && !gameOver) {
+            playWrongSound();
+            setFeedback(`⏰ Nako e felile! Karabo e nepahetseng ke: "${currentRiddleRef.current.answer}"`);
+            setTimeout(() => endGame(), 2500);
+          }
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  };
+
+  const stopTimer = () => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+  };
 
   // ----- Game Flow -----
   const startGame = () => {
@@ -205,8 +282,10 @@ function GameSection() {
     const randomIndex = Math.floor(Math.random() * source.length);
     const riddle = source[randomIndex];
     setCurrentRiddle(riddle);
+    currentRiddleRef.current = riddle;
     setOptions(generateOptions(riddle.answer, source));
     setSelectedAnswer('');
+    startTimer();
   };
 
   const playCelebration = () => {
@@ -216,13 +295,13 @@ function GameSection() {
     if (streak + 1 >= 3) {
       setShowFireworks(true);
       setTimeout(() => setShowFireworks(false), 2000);
+      playStreakSound();
+    } else {
+      playCorrectSound();
     }
     
     setCorrectAnimation(true);
     setTimeout(() => setCorrectAnimation(false), 500);
-    
-    if (correctSoundRef.current) correctSoundRef.current();
-    if (streakSoundRef.current && streak + 1 >= 3) streakSoundRef.current(streak + 1);
   };
 
   const earnPoints = async (pointsEarned) => {
@@ -244,6 +323,7 @@ function GameSection() {
 
   const checkAnswer = (selected) => {
     if (!currentRiddle) return;
+    stopTimer();
     const isCorrect = selected.toLowerCase() === currentRiddle.answer.toLowerCase();
     
     if (isCorrect) {
@@ -272,33 +352,44 @@ function GameSection() {
         }
       }, 1800);
     } else {
-      if (wrongSoundRef.current) wrongSoundRef.current();
+      playWrongSound();
       setFeedback(`❌ U fositse! Karabo e nepahetseng ke: "${currentRiddle.answer}"`);
       setTimeout(() => endGame(), 2500);
     }
   };
 
   const endGame = () => {
+    stopTimer();
     setGameOver(true);
     saveScore();
+    fetchLeaderboard(); // Refresh leaderboard after game
   };
 
-  const saveScore = () => {
+  const saveScore = async () => {
     const newScore = {
-      name: playerName,
+      player_name: playerName,
       score: score,
-      correct: riddleCount,
-      total: totalRiddles,
-      date: new Date().toISOString().split('T')[0]
+      correct_count: riddleCount,
+      total_questions: totalRiddles,
+      game_mode: gameMode,
     };
-    const updatedLeaderboard = [...leaderboard, newScore];
-    updatedLeaderboard.sort((a, b) => b.score - a.score);
-    const top10 = updatedLeaderboard.slice(0, 10);
-    setLeaderboard(top10);
-    localStorage.setItem('lilothoLeaderboard', JSON.stringify(top10));
+    // Try to submit to backend
+    try {
+      await fetch(`${process.env.REACT_APP_API_URL}/api/v1/game/scores`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newScore),
+      });
+    } catch {}
+    // Also keep local for immediate feedback
+    const localEntry = { player_name: playerName, score, correct_count: riddleCount, total_questions: totalRiddles, game_mode: gameMode, created_at: new Date().toISOString() };
+    const updated = [...leaderboard, localEntry].sort((a,b) => b.score - a.score).slice(0,10);
+    setLeaderboard(updated);
+    localStorage.setItem('lilothoLeaderboard', JSON.stringify(updated));
   };
 
   const resetGame = () => {
+    stopTimer();
     setShowGame(false);
     setShowNameInput(true);
     setPlayerName('');
@@ -317,6 +408,11 @@ function GameSection() {
     setFeedback('');
     pickRandomRiddle();
   };
+
+  // Cleanup timer on unmount
+  useEffect(() => {
+    return () => stopTimer();
+  }, []);
 
   // ----- Render -----
   return (
@@ -356,15 +452,19 @@ function GameSection() {
           {/* Leaderboard */}
           <div className="leaderboard">
             <h3>🏆 Lethathamo la Bahlōli</h3>
-            <div className="leaderboard-list">
-              {leaderboard.slice(0, 5).map((player, index) => (
-                <div key={index} className="leaderboard-item">
-                  <span className="rank">{index + 1}</span>
-                  <span className="player-name">{player.name}</span>
-                  <span className="player-score">{player.score} pts</span>
-                </div>
-              ))}
-            </div>
+            {isLeaderboardLoading ? (
+              <div className="leaderboard-loading">Ea lata...</div>
+            ) : (
+              <div className="leaderboard-list">
+                {leaderboard.slice(0, 5).map((player, index) => (
+                  <div key={index} className="leaderboard-item">
+                    <span className="rank">{index + 1}</span>
+                    <span className="player-name">{player.player_name || player.name}</span>
+                    <span className="player-score">{player.score} pts</span>
+                  </div>
+                ))}
+              </div>
+            )}
             <div className="game-quote">
               <p>"Me n't soare ke nye"</p>
             </div>
@@ -403,6 +503,11 @@ function GameSection() {
                   {streak >= 3 && <span className="streak-bonus"> +{streak * 5} bonus!</span>}
                 </div>
                 <div className="riddle-count">📖 Lilotho: {riddleCount + 1}/{totalRiddles}</div>
+                <div className="timer-container">
+                  <div className={`timer ${timeLeft <= 2 ? 'warning' : ''}`}>
+                    ⏳ {timeLeft}s
+                  </div>
+                </div>
                 <button className="back-button" onClick={resetGame} title="Khutlela morao">
                   ← Khutlela
                 </button>
