@@ -3,11 +3,35 @@ import './Newsletter.css';
 
 function Newsletter() {
   const [email, setEmail] = useState('');
+  const [status, setStatus] = useState('idle'); // 'loading', 'success', 'error'
+  const [message, setMessage] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    alert(`Subscribed with: ${email}`);
-    setEmail('');
+    if (!email) return;
+
+    setStatus('loading');
+    try {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/api/v1/subscribers`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      
+      const data = await res.json();
+      
+      if (res.ok) {
+        setStatus('success');
+        setMessage('✅ You\'re subscribed! Check your inbox.');
+        setEmail('');
+      } else {
+        setStatus('error');
+        setMessage(data.detail || 'Subscription failed. Please try again.');
+      }
+    } catch (error) {
+      setStatus('error');
+      setMessage('Network error. Please check your connection.');
+    }
   };
 
   return (
@@ -26,9 +50,21 @@ function Newsletter() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              disabled={status === 'loading'}
             />
-            <button type="submit" className="subscribe-btn">Subscribe</button>
+            <button 
+              type="submit" 
+              className="subscribe-btn"
+              disabled={status === 'loading'}
+            >
+              {status === 'loading' ? 'Subscribing...' : 'Subscribe'}
+            </button>
           </form>
+          {message && (
+            <div className={`newsletter-message ${status}`}>
+              {message}
+            </div>
+          )}
         </div>
       </div>
     </section>
