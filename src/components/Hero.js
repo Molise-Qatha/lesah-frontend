@@ -33,11 +33,28 @@ function Hero() {
           Join 1,200+ students from NUL, Limkokwing & more who are already saving time and money.
         </p>
         
-        {/* Service Tags */}
+        {/* Service Tags as Clickable Buttons */}
         <div className="service-tags">
-          <span className="service-tag">🏠 Accommodation</span>
-          <span className="service-tag">💰 Student Loans</span>
-          <span className="service-tag">🚚 Asset Delivery</span>
+          <Link to="/accommodation" className="service-tag">
+            🏠 Accommodation
+          </Link>
+          <Link to="/loans" className="service-tag">
+            💰 Student Loans
+          </Link>
+          <Link to="/delivery" className="service-tag">
+            🚚 Asset Delivery
+          </Link>
+          <button 
+            onClick={() => {
+              const gameSection = document.getElementById('game-section');
+              if (gameSection) {
+                gameSection.scrollIntoView({ behavior: 'smooth' });
+              }
+            }} 
+            className="service-tag"
+          >
+            🎮 Lilotho Game
+          </button>
         </div>
         
         <div className="hero-buttons">
