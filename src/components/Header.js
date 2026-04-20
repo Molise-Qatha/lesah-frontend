@@ -6,12 +6,23 @@ import logo from '../assets/images/logo.png';
 function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [user, setUser] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
     const token = localStorage.getItem('access_token');
     setIsLoggedIn(!!token);
+    const userStr = localStorage.getItem('user');
+    if (userStr) {
+      try {
+        setUser(JSON.parse(userStr));
+      } catch {
+        setUser(null);
+      }
+    } else {
+      setUser(null);
+    }
   }, [location]);
 
   const scrollToGame = () => {
@@ -35,8 +46,15 @@ function Header() {
     localStorage.removeItem('refresh_token');
     localStorage.removeItem('user');
     setIsLoggedIn(false);
+    setUser(null);
     navigate('/');
   };
+
+  const handleBack = () => {
+    navigate(-1);
+  };
+
+  const isHomePage = location.pathname === '/';
 
   return (
     <header className="header">
@@ -47,12 +65,21 @@ function Header() {
             <span className="logo-text">LeSAH</span>
           </Link>
           
-          <button 
-            className="mobile-menu-btn" 
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-          >
-            ☰
-          </button>
+          <div className="nav-actions">
+            {/* Back button - shown on all pages except home */}
+            {!isHomePage && (
+              <button className="back-btn" onClick={handleBack} aria-label="Go back">
+                ← Back
+              </button>
+            )}
+            <button 
+              className="mobile-menu-btn" 
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              aria-label="Toggle menu"
+            >
+              ☰
+            </button>
+          </div>
 
           <div className={`nav-content ${isMenuOpen ? 'active' : ''}`}>
             <ul className="nav-links">
@@ -61,6 +88,9 @@ function Header() {
               <li><Link to="/delivery" onClick={() => setIsMenuOpen(false)}>Delivery</Link></li>
               <li><button className="nav-link-btn" onClick={scrollToGame}>Game</button></li>
               <li><Link to="/contact" onClick={() => setIsMenuOpen(false)}>Contact</Link></li>
+              {user?.role === 'admin' && (
+                <li><Link to="/admin" onClick={() => setIsMenuOpen(false)}>Admin</Link></li>
+              )}
             </ul>
 
             <div className="auth-section">
