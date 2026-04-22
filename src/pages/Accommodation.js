@@ -27,21 +27,19 @@ const bookingSchema = z.object({
 });
 
 // Mock listing for Makhutlang Phama Residence
-const mockListings = [
-  {
-    id: 1,
-    name: 'Makhutlang Phama Residence',
-    location: 'Maseru',
-    area: 'Roma',
-    price_value: 500,
-    room_type: 'private',
-    distance: 'Walking distance to NUL',
-    amenities: ['24/7 Security', 'Private Room', 'Freedom'],
-    available: true,
-    rating: 4.5,
-    description: 'Private one‑room residence. Enjoy your freedom with security. Walking distance to the National University of Lesotho.',
-  },
-];
+const MOCK_LISTING = {
+  id: 1,
+  name: 'Makhutlang Phama Residence',
+  location: 'Maseru',
+  area: 'Roma',
+  price_value: 500,
+  room_type: 'private',
+  distance: 'Walking distance to NUL',
+  amenities: ['24/7 Security', 'Private Room', 'Freedom'],
+  available: true,
+  rating: 4.5,
+  description: 'Private one‑room residence. Enjoy your freedom with security. Walking distance to the National University of Lesotho.',
+};
 
 function Accommodation() {
   const navigate = useNavigate();
@@ -79,25 +77,21 @@ function Accommodation() {
     setIsLoggedIn(!!token);
   }, []);
 
-  // Fetch listings from backend (fallback to mock)
+  // Fetch listings from backend (TEMPORARILY FORCE MOCK)
   useEffect(() => {
     const fetchListings = async () => {
       setIsLoadingListings(true);
       setFetchError('');
       try {
-        const data = await accommodationService.getListings();
-        if (data && data.length > 0) {
-          setListings(data);
-          setFilteredListings(data);
-        } else {
-          // Use mock listing
-          setListings(mockListings);
-          setFilteredListings(mockListings);
-        }
+        // const data = await accommodationService.getListings();
+        // FORCE MOCK LISTING FOR NOW
+        const data = [MOCK_LISTING];
+        setListings(data);
+        setFilteredListings(data);
       } catch (error) {
         console.error('Failed to fetch listings, using mock:', error);
-        setListings(mockListings);
-        setFilteredListings(mockListings);
+        setListings([MOCK_LISTING]);
+        setFilteredListings([MOCK_LISTING]);
       } finally {
         setIsLoadingListings(false);
       }
