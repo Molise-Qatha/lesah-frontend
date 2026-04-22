@@ -20,7 +20,7 @@ function GameSection() {
   const [correctAnimation, setCorrectAnimation] = useState(false);
   const [totalRiddles] = useState(20);
   const [gameMode, setGameMode] = useState('lilotho'); // 'lilotho' or 'english'
-  const [timeLeft, setTimeLeft] = useState(5);
+  const [timeLeft, setTimeLeft] = useState(20); // Changed from 5 to 20 seconds
   const [isLeaderboardLoading, setIsLeaderboardLoading] = useState(true);
 
   const timerRef = useRef(null);
@@ -236,7 +236,7 @@ function GameSection() {
   // ----- Timer Logic -----
   const startTimer = () => {
     if (timerRef.current) clearInterval(timerRef.current);
-    setTimeLeft(5);
+    setTimeLeft(20); // Reset to 20 seconds
     timerRef.current = setInterval(() => {
       setTimeLeft(prev => {
         if (prev <= 1) {
@@ -504,7 +504,7 @@ function GameSection() {
                 </div>
                 <div className="riddle-count">📖 Lilotho: {riddleCount + 1}/{totalRiddles}</div>
                 <div className="timer-container">
-                  <div className={`timer ${timeLeft <= 2 ? 'warning' : ''}`}>
+                  <div className={`timer ${timeLeft <= 5 ? 'warning' : ''}`}>
                     ⏳ {timeLeft}s
                   </div>
                 </div>
