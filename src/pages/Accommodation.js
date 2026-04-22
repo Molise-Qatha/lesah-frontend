@@ -26,6 +26,23 @@ const bookingSchema = z.object({
   }),
 });
 
+// Mock listing for Makhutlang Phama Residence
+const mockListings = [
+  {
+    id: 1,
+    name: 'Makhutlang Phama Residence',
+    location: 'Maseru',
+    area: 'Roma',
+    price_value: 500,
+    room_type: 'private',
+    distance: 'Walking distance to NUL',
+    amenities: ['24/7 Security', 'Private Room', 'Freedom'],
+    available: true,
+    rating: 4.5,
+    description: 'Private one‑room residence. Enjoy your freedom with security. Walking distance to the National University of Lesotho.',
+  },
+];
+
 function Accommodation() {
   const navigate = useNavigate();
   const [listings, setListings] = useState([]);
@@ -62,19 +79,25 @@ function Accommodation() {
     setIsLoggedIn(!!token);
   }, []);
 
-  // Fetch listings from backend
+  // Fetch listings from backend (fallback to mock)
   useEffect(() => {
     const fetchListings = async () => {
       setIsLoadingListings(true);
       setFetchError('');
       try {
         const data = await accommodationService.getListings();
-        setListings(data);
-        setFilteredListings(data);
+        if (data && data.length > 0) {
+          setListings(data);
+          setFilteredListings(data);
+        } else {
+          // Use mock listing
+          setListings(mockListings);
+          setFilteredListings(mockListings);
+        }
       } catch (error) {
-        console.error('Failed to fetch listings:', error);
-        setFetchError('Unable to load accommodations. Please try again later.');
-        toast.error('Failed to load listings');
+        console.error('Failed to fetch listings, using mock:', error);
+        setListings(mockListings);
+        setFilteredListings(mockListings);
       } finally {
         setIsLoadingListings(false);
       }
