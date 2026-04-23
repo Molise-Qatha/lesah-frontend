@@ -2,64 +2,45 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import './Hero.css';
 
-// Import local background image
-import heroBg from '../assets/images/hero-bg.jpg';
-
 function Hero() {
-  const scrollToServices = () => {
-    const servicesSection = document.getElementById('services-section');
-    if (servicesSection) {
-      servicesSection.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
   return (
-    <section 
-      className="hero" 
-      style={{
-        backgroundImage: `linear-gradient(135deg, rgba(102, 126, 234, 0.7), rgba(118, 75, 162, 0.75)), url(${heroBg})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat'
-      }}
-    >
-      <div className="hero-container">
-        <h1 className="hero-title">
-          Welcome to <span className="brand-name">LeSAH</span>
-          <br />
-          <span className="hero-subtitle">Your All-in-One Student Hub in Lesotho</span>
-        </h1>
-        <p className="hero-description">
-          Join multitudes of students from NUL who are already saving time and money.
-        </p>
-        
-        {/* Service Tags as Clickable Buttons */}
-        <div className="service-tags">
-          <Link to="/accommodation" className="service-tag">
-            🏠 Accommodation
-          </Link>
-          <Link to="/loans" className="service-tag">
-            💰 Student Loans
-          </Link>
-          <Link to="/delivery" className="service-tag">
-            🚚 Asset Delivery
-          </Link>
-          <button 
-            onClick={() => {
-              const gameSection = document.getElementById('game-section');
-              if (gameSection) {
-                gameSection.scrollIntoView({ behavior: 'smooth' });
-              }
-            }} 
-            className="service-tag"
-          >
-            🎮 Lilotho Game
-          </button>
+    <section className="hero-new">
+      <div className="hero-new-container">
+        {/* LEFT TEXT SIDE */}
+        <div className="hero-new-text">
+          <span className="hero-pill">Your All-in-One Student Support Platform</span>
+
+          <h1 className="hero-headline">
+            Everything students need — in one place.
+          </h1>
+
+          <p className="hero-subtitle">
+            Find accommodation, student loans, and delivery services across Lesotho — fast, simple, and reliable.
+          </p>
+
+          <div className="hero-notice">
+            ⚠️ <strong>Note:</strong> You must register before submitting any request.
+          </div>
+
+          <div className="hero-actions">
+            <Link to="/register" className="hero-cta-btn">
+              Get Started (Register First)
+            </Link>
+            <Link to="/learn-more" className="hero-secondary-link">
+              Learn how it works →
+            </Link>
+          </div>
         </div>
-        
-        <div className="hero-buttons">
-          <button onClick={scrollToServices} className="btn-primary">Get Started Now</button>
-          <Link to="/learn-more" className="btn-secondary">Learn More</Link>
+
+        {/* RIGHT IMAGE PLACEHOLDER */}
+        <div className="hero-image-placeholder">
+          <div className="placeholder-content">
+            <div className="placeholder-icon">📱</div>
+            <p className="placeholder-label">
+              Image Placeholder<br />
+              (Phone Mockup + Student Photo will be added here later)
+            </p>
+          </div>
         </div>
       </div>
     </section>
