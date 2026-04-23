@@ -30,7 +30,7 @@ function Hero() {
           <span className="hero-subtitle">Your All-in-One Student Hub in Lesotho</span>
         </h1>
         <p className="hero-description">
-          Join 1,200+ students from NUL, Limkokwing & more who are already saving time and money.
+          Join multitudes of students from NUL who are already saving time and money.
         </p>
         
         {/* Service Tags as Clickable Buttons */}
