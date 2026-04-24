@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import './Hero.css';
+import heroMockup from '../assets/images/hero-student-mockup.png'; // 👈 your image
 
 function Hero() {
   return (
@@ -32,15 +33,13 @@ function Hero() {
           </div>
         </div>
 
-        {/* RIGHT IMAGE PLACEHOLDER */}
-        <div className="hero-image-placeholder">
-          <div className="placeholder-content">
-            <div className="placeholder-icon">📱</div>
-            <p className="placeholder-label">
-              Image Placeholder<br />
-              (Phone Mockup + Student Photo will be added here later)
-            </p>
-          </div>
+        {/* RIGHT IMAGE */}
+        <div className="hero-image-container">
+          <img
+            src={heroMockup}
+            alt="LeSAH app on a student's phone"
+            className="hero-mockup-img"
+          />
         </div>
       </div>
     </section>
