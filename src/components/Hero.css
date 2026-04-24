@@ -262,3 +262,19 @@
     justify-content: center;
   }
 }
+.hero-refined-trust {
+  display: flex;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #4b5563;
+  margin: 0.25rem 0 0.5rem;
+}
+
+.hero-refined-trust span {
+  background: #f3f4f6;
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  white-space: nowrap;
+}
