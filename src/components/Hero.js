@@ -8,29 +8,26 @@ function Hero() {
     <section className="hero-refined">
       <div className="hero-refined-grid">
         <div className="hero-refined-text">
-          <p className="hero-refined-label">Your all-in-one student support platform</p>
+          <p className="hero-refined-label">Your all‑in‑one student support platform</p>
 
           <h1 className="hero-refined-headline">
-            Everything students need in one place.
+            Everything students need — in one place.
           </h1>
 
           <p className="hero-refined-subtitle">
             Find accommodation, student loans, and delivery services across Lesotho — fast, simple, and reliable.
           </p>
 
+          {/* Small trust badges – decorative only, no links */}
           <div className="hero-refined-trust">
-            <span>Accommodation</span>
-            <span>Student Loans</span>
-            <span>Delivery</span>
+            <span>🏠 Accommodation</span>
+            <span>💰 Student Loans</span>
+            <span>🚚 Delivery</span>
           </div>
 
           <div className="hero-refined-action">
             <Link to="/register" className="hero-refined-cta">
-              Get Started
-            </Link>
-
-            <Link to="/services" className="hero-refined-secondary">
-              Explore Services
+              Get Started (Register First)
             </Link>
           </div>
 
