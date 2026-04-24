@@ -118,7 +118,7 @@
   border-radius: 1.5rem;
 }
 
-/* ----- Mobile (text first, image second) ----- */
+/* ----- Mobile (hide image, center text) ----- */
 @media (max-width: 768px) {
   .hero-refined {
     padding: 3rem 1.25rem 2.5rem;
@@ -126,17 +126,22 @@
   }
 
   .hero-refined-grid {
-    grid-template-columns: 1fr;
-    gap: 2rem;
+    grid-template-columns: 1fr;      /* single column */
+    gap: 0;
   }
 
-  /* No order change – text stays first, image after */
+  /* Hide the image completely */
   .hero-refined-image {
-    /* nothing extra needed */
+    display: none;
   }
 
-  .hero-refined-img {
-    max-width: 260px;
+  .hero-refined-text {
+    text-align: center;
+    align-items: center;
+  }
+
+  .hero-refined-headline {
+    font-size: 2rem;
   }
 
   .hero-refined-cta {
@@ -144,7 +149,7 @@
     text-align: center;
   }
 
-  .hero-refined-headline {
-    font-size: 2rem;
+  .hero-refined-trust {
+    justify-content: center;
   }
 }
