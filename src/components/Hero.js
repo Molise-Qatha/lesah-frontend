@@ -7,27 +7,36 @@ function Hero() {
   return (
     <section className="hero-refined">
       <div className="hero-refined-grid">
-        {/* Left text */}
         <div className="hero-refined-text">
-          <p className="hero-refined-label">Your All-in-One Student Support Platform</p>
+          <p className="hero-refined-label">Your all-in-one student support platform</p>
 
           <h1 className="hero-refined-headline">
-            Everything students need<br /> in one place.
+            Everything students need in one place.
           </h1>
 
           <p className="hero-refined-subtitle">
-            Find accommodation, student loans, and delivery services across Lesotho — fast and reliable.
+            Find accommodation, student loans, and delivery services across Lesotho — fast, simple, and reliable.
           </p>
+
+          <div className="hero-refined-trust">
+            <span>Accommodation</span>
+            <span>Student Loans</span>
+            <span>Delivery</span>
+          </div>
 
           <div className="hero-refined-action">
             <Link to="/register" className="hero-refined-cta">
-              Get Started (Register First)
+              Get Started
             </Link>
-            <span className="hero-refined-note">Free account required to submit requests</span>
+
+            <Link to="/services" className="hero-refined-secondary">
+              Explore Services
+            </Link>
           </div>
+
+          <p className="hero-refined-note">Free account required to submit requests.</p>
         </div>
 
-        {/* Right image */}
         <div className="hero-refined-image">
           <img
             src={heroMockup}
