@@ -12,7 +12,7 @@ function Hero() {
           <p className="hero-refined-label">Your All-in-One Student Support Platform</p>
 
           <h1 className="hero-refined-headline">
-            Everything students need<br />— in one place.
+            Everything students need<br /> in one place.
           </h1>
 
           <p className="hero-refined-subtitle">
