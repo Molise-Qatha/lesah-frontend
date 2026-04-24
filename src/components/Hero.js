@@ -1,44 +1,38 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import './Hero.css';
-import heroMockup from '../assets/images/hero-student-mockup.png'; // 👈 your image
+import heroMockup from '../assets/images/hero-student-mockup.png';
 
 function Hero() {
   return (
-    <section className="hero-new">
-      <div className="hero-new-container">
-        {/* LEFT TEXT SIDE */}
-        <div className="hero-new-text">
-          <span className="hero-pill">Your All-in-One Student Support Platform</span>
+    <section className="hero-refined">
+      <div className="hero-refined-grid">
+        {/* Left text */}
+        <div className="hero-refined-text">
+          <p className="hero-refined-label">Your All-in-One Student Support Platform</p>
 
-          <h1 className="hero-headline">
-            Everything students need — in one place.
+          <h1 className="hero-refined-headline">
+            Everything students need<br />— in one place.
           </h1>
 
-          <p className="hero-subtitle">
-            Find accommodation, student loans, and delivery services across Lesotho — fast, simple, and reliable.
+          <p className="hero-refined-subtitle">
+            Find accommodation, student loans, and delivery services across Lesotho — fast and reliable.
           </p>
 
-          <div className="hero-notice">
-            ⚠️ <strong>Note:</strong> You must register before submitting any request.
-          </div>
-
-          <div className="hero-actions">
-            <Link to="/register" className="hero-cta-btn">
+          <div className="hero-refined-action">
+            <Link to="/register" className="hero-refined-cta">
               Get Started (Register First)
             </Link>
-            <Link to="/learn-more" className="hero-secondary-link">
-              Learn how it works →
-            </Link>
+            <span className="hero-refined-note">Free account required to submit requests</span>
           </div>
         </div>
 
-        {/* RIGHT IMAGE */}
-        <div className="hero-image-container">
+        {/* Right image */}
+        <div className="hero-refined-image">
           <img
             src={heroMockup}
             alt="LeSAH app on a student's phone"
-            className="hero-mockup-img"
+            className="hero-refined-img"
           />
         </div>
       </div>
