@@ -37,29 +37,32 @@ function Hero() {
           </div>
 
           <div className="hero-refined-action">
-            {/* Primary CTA changes based on login state */}
-            {isLoggedIn ? (
-              <button onClick={scrollToServices} className="hero-refined-cta">
-                Explore Services
-              </button>
-            ) : (
-              <Link to="/register" className="hero-refined-cta">
-                Get Started (Register First)
-              </Link>
-            )}
+            {/* Primary CTA + note group */}
+            <div className="hero-cta-group">
+              {isLoggedIn ? (
+                <button onClick={scrollToServices} className="hero-refined-cta">
+                  Explore Services
+                </button>
+              ) : (
+                <>
+                  <Link to="/register" className="hero-refined-cta">
+                    Get Started (Register First)
+                  </Link>
+                  <p className="hero-refined-note">Free account required to submit requests.</p>
+                </>
+              )}
+            </div>
 
-            {/* WhatsApp button */}
+            {/* WhatsApp button always visible */}
             <a
               href="https://wa.me/26656613551"   // 👈 Replace with your WhatsApp number
               target="_blank"
               rel="noopener noreferrer"
               className="hero-whatsapp-btn"
             >
-              💬 Chat with us on WhatsApp
+              💬 Chat on WhatsApp
             </a>
           </div>
-
-          <p className="hero-refined-note">Free account required to submit requests.</p>
         </div>
 
         <div className="hero-refined-image">
