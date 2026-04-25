@@ -60,7 +60,7 @@ function Hero() {
               rel="noopener noreferrer"
               className="hero-whatsapp-btn"
             >
-              💬 Chat on WhatsApp
+              💬 Chat with LeSAH on WhatsAPP
             </a>
           </div>
         </div>
