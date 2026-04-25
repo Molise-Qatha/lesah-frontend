@@ -52,7 +52,7 @@
   max-width: 540px;
 }
 
-/* Trust badges (decorative only) */
+/* Trust badges */
 .hero-refined-trust {
   display: flex;
   gap: 0.8rem;
@@ -70,15 +70,23 @@
   white-space: nowrap;
 }
 
-/* Action area */
+/* Action area – side by side on desktop */
 .hero-refined-action {
   margin-top: 0.5rem;
   display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
+  align-items: flex-start;
+  gap: 1rem;
+  flex-wrap: wrap;
 }
 
-/* Primary CTA (Register / Explore Services) */
+/* Group for primary CTA + note */
+.hero-cta-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+/* Primary CTA */
 .hero-refined-cta {
   background: #2a9d8f;
   color: white;
@@ -88,17 +96,24 @@
   font-size: 1.05rem;
   text-decoration: none;
   display: inline-block;
-  width: fit-content;
   transition: background 0.2s, transform 0.1s;
   box-shadow: 0 4px 14px rgba(42, 157, 143, 0.25);
   border: none;
   cursor: pointer;
   font-family: inherit;
+  white-space: nowrap;
 }
 
 .hero-refined-cta:hover {
   background: #21867a;
   transform: translateY(-1px);
+}
+
+/* Note below primary CTA (only when not logged in) */
+.hero-refined-note {
+  font-size: 0.85rem;
+  color: #6b7280;
+  margin: 0.5rem 0 0 0;
 }
 
 /* WhatsApp button */
@@ -114,20 +129,12 @@
   text-decoration: none;
   transition: background 0.2s, transform 0.1s;
   box-shadow: 0 4px 14px rgba(37, 211, 102, 0.25);
-  margin-top: 0.5rem;
-  width: fit-content;
+  white-space: nowrap;
 }
 
 .hero-whatsapp-btn:hover {
   background: #1da851;
   transform: translateY(-1px);
-}
-
-/* Note text */
-.hero-refined-note {
-  font-size: 0.85rem;
-  color: #6b7280;
-  margin: 0;
 }
 
 /* ----- Right Image ----- */
@@ -146,7 +153,7 @@
   border-radius: 1.5rem;
 }
 
-/* ----- Mobile (hide image, center text) ----- */
+/* ----- Mobile ----- */
 @media (max-width: 768px) {
   .hero-refined {
     padding: 3rem 1.25rem 2.5rem;
@@ -158,7 +165,6 @@
     gap: 0;
   }
 
-  /* Hide the image completely on mobile */
   .hero-refined-image {
     display: none;
   }
@@ -170,6 +176,17 @@
 
   .hero-refined-headline {
     font-size: 2rem;
+  }
+
+  /* Stack buttons vertically on mobile */
+  .hero-refined-action {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+
+  .hero-cta-group {
+    align-items: center;
   }
 
   .hero-refined-cta,
