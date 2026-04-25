@@ -50,7 +50,7 @@ function Hero() {
 
             {/* WhatsApp button */}
             <a
-              href="https://wa.me/266XXXXXXXXX"   // 👈 Replace with your WhatsApp number
+              href="https://wa.me/26656613551"   // 👈 Replace with your WhatsApp number
               target="_blank"
               rel="noopener noreferrer"
               className="hero-whatsapp-btn"
