@@ -1,4 +1,5 @@
 
+/* ===== Refined Hero ===== */
 .hero-refined {
   background: #fafbfc;
   padding: 5rem 1.5rem 4rem;
@@ -77,6 +78,7 @@
   gap: 0.75rem;
 }
 
+/* Primary CTA (Register / Explore Services) */
 .hero-refined-cta {
   background: #2a9d8f;
   color: white;
@@ -89,6 +91,9 @@
   width: fit-content;
   transition: background 0.2s, transform 0.1s;
   box-shadow: 0 4px 14px rgba(42, 157, 143, 0.25);
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
 }
 
 .hero-refined-cta:hover {
@@ -96,6 +101,29 @@
   transform: translateY(-1px);
 }
 
+/* WhatsApp button */
+.hero-whatsapp-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #25D366;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 3rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.2s, transform 0.1s;
+  box-shadow: 0 4px 14px rgba(37, 211, 102, 0.25);
+  margin-top: 0.5rem;
+  width: fit-content;
+}
+
+.hero-whatsapp-btn:hover {
+  background: #1da851;
+  transform: translateY(-1px);
+}
+
+/* Note text */
 .hero-refined-note {
   font-size: 0.85rem;
   color: #6b7280;
@@ -126,11 +154,11 @@
   }
 
   .hero-refined-grid {
-    grid-template-columns: 1fr;      /* single column */
+    grid-template-columns: 1fr;
     gap: 0;
   }
 
-  /* Hide the image completely */
+  /* Hide the image completely on mobile */
   .hero-refined-image {
     display: none;
   }
@@ -144,9 +172,11 @@
     font-size: 2rem;
   }
 
-  .hero-refined-cta {
+  .hero-refined-cta,
+  .hero-whatsapp-btn {
     width: 100%;
     text-align: center;
+    justify-content: center;
   }
 
   .hero-refined-trust {
