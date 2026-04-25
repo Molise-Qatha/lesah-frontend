@@ -1,8 +1,8 @@
-
 /* ===== Refined Hero ===== */
 .hero-refined {
   background: #fafbfc;
   padding: 5rem 1.5rem 4rem;
+  padding-top: 90px;               /* ← pushes hero below fixed header */
   min-height: 85vh;
   display: flex;
   align-items: center;
@@ -153,10 +153,11 @@
   border-radius: 1.5rem;
 }
 
-/* ----- Mobile ----- */
+/* ----- Mobile (hide image, center text) ----- */
 @media (max-width: 768px) {
   .hero-refined {
     padding: 3rem 1.25rem 2.5rem;
+    padding-top: 80px;           /* slightly smaller for mobile header */
     min-height: auto;
   }
 
@@ -178,7 +179,6 @@
     font-size: 2rem;
   }
 
-  /* Stack buttons vertically on mobile */
   .hero-refined-action {
     flex-direction: column;
     align-items: stretch;
