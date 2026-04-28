@@ -1,232 +1,183 @@
-/* AdminDashboard.css - Clean, professional admin interface */
-
-:root {
-  --primary: #2a9d8f;
-  --primary-dark: #21867a;
-  --primary-light: #e0f2f1;
-  --secondary: #264653;
-  --accent: #e9c46a;
-  --danger: #e76f51;
-  --success: #2a9d8f;
-  --warning: #f4a261;
-  --gray-50: #f9fafb;
-  --gray-100: #f3f4f6;
-  --gray-200: #e5e7eb;
-  --gray-300: #d1d5db;
-  --gray-400: #9ca3af;
-  --gray-500: #6b7280;
-  --gray-600: #4b5563;
-  --gray-700: #374151;
-  --gray-800: #1f2937;
-  --gray-900: #111827;
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-  --radius: 0.5rem;
-  --radius-lg: 1rem;
-  --radius-xl: 1.5rem;
-}
+/* AdminDashboard.css – Full management panel */
 
 .admin-dashboard {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #f5f7fa 0%, #eef2f3 100%);
-  padding: 2rem 1.5rem;
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .admin-loading {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.25rem;
-  color: var(--gray-600);
-  background: var(--gray-50);
+  text-align: center;
+  padding: 3rem;
+  font-size: 1.2rem;
+  color: #6b7280;
 }
 
-/* ----- Header ----- */
-.admin-dashboard h1 {
-  font-size: 2.5rem;
-  font-weight: 800;
-  color: var(--gray-900);
+h1 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #1f2937;
   margin-bottom: 2rem;
-  border-bottom: 2px solid var(--primary-light);
-  padding-bottom: 0.75rem;
-  display: inline-block;
 }
 
-/* ----- Stats Cards ----- */
+/* Stats Cards */
 .stats-cards {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 1.5rem;
-  margin-bottom: 2.5rem;
+  margin-bottom: 2rem;
 }
 
 .stat-card {
   background: white;
   padding: 1.5rem;
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
   text-align: center;
-  transition: all 0.2s ease;
-  border: 1px solid var(--gray-200);
-}
-
-.stat-card:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-lg);
-  border-color: var(--primary-light);
 }
 
 .stat-value {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #2a9d8f;
   display: block;
-  font-size: 3rem;
-  font-weight: 800;
-  color: var(--primary);
-  line-height: 1.2;
 }
 
 .stat-label {
-  font-size: 0.9375rem;
+  color: #6b7280;
+  font-size: 0.9rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: var(--gray-500);
-  font-weight: 600;
 }
 
-/* ----- Pending Sections ----- */
-.pending-loans {
-  background: white;
-  border-radius: var(--radius-xl);
-  padding: 2rem;
-  box-shadow: var(--shadow-lg);
-  margin-bottom: 2rem;
-  border: 1px solid var(--gray-200);
-}
-
-.pending-loans h2 {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--gray-900);
-  margin-bottom: 1.5rem;
+/* Tabs */
+.admin-tabs {
   display: flex;
-  align-items: center;
   gap: 0.5rem;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #e5e7eb;
 }
 
-.pending-loans h2::before {
-  content: '📋';
-  font-size: 1.5rem;
+.admin-tabs .tab {
+  background: none;
+  border: none;
+  padding: 1rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #6b7280;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s;
 }
 
-/* ----- Table Styles ----- */
-.pending-loans table {
+.admin-tabs .tab:hover {
+  color: #2a9d8f;
+}
+
+.admin-tabs .tab.active {
+  color: #2a9d8f;
+  border-bottom-color: #2a9d8f;
+}
+
+/* Sections */
+.admin-section {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  margin-bottom: 2rem;
+}
+
+.admin-section h2 {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 1.5rem;
+}
+
+.table-responsive {
+  overflow-x: auto;
+}
+
+table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.9375rem;
 }
 
-.pending-loans th {
+th, td {
+  padding: 0.75rem 1rem;
   text-align: left;
-  padding: 1rem 0.75rem;
-  background: var(--gray-50);
-  color: var(--gray-700);
+  border-bottom: 1px solid #e5e7eb;
+}
+
+th {
+  background: #f9fafb;
   font-weight: 600;
-  border-bottom: 2px solid var(--gray-200);
+  color: #4b5563;
 }
 
-.pending-loans td {
-  padding: 1rem 0.75rem;
-  border-bottom: 1px solid var(--gray-200);
-  color: var(--gray-700);
+tr:hover td {
+  background: #f9fafb;
 }
 
-.pending-loans tr:last-child td {
-  border-bottom: none;
-}
-
-.pending-loans tr:hover td {
-  background: var(--gray-50);
-}
-
-/* ----- Action Buttons ----- */
+/* Buttons */
 .approve-btn, .reject-btn {
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: var(--radius);
-  font-weight: 600;
-  font-size: 0.8125rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
+  padding: 0.3rem 0.8rem;
   margin-right: 0.5rem;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 0.85rem;
 }
 
 .approve-btn {
-  background: var(--success);
+  background: #2a9d8f;
   color: white;
 }
 
 .approve-btn:hover {
-  background: #1e7a6e;
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-sm);
+  background: #21867a;
 }
 
 .reject-btn {
-  background: var(--danger);
+  background: #e76f51;
   color: white;
 }
 
 .reject-btn:hover {
-  background: #c95d41;
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-sm);
+  background: #d65a3b;
 }
 
-/* ----- Empty State ----- */
-.pending-loans p {
+/* Empty state */
+.admin-section p {
+  color: #6b7280;
+  text-align: center;
+  padding: 2rem;
+}
+
+/* Loading */
+.admin-loading {
   text-align: center;
   padding: 3rem;
-  color: var(--gray-500);
-  font-size: 1.125rem;
-  background: var(--gray-50);
-  border-radius: var(--radius);
+  color: #6b7280;
 }
 
-/* ----- Responsive Table (Mobile) ----- */
+/* Responsive */
 @media (max-width: 768px) {
   .admin-dashboard {
     padding: 1rem;
   }
-
-  .admin-dashboard h1 {
-    font-size: 2rem;
+  .admin-tabs {
+    flex-direction: column;
+    gap: 0;
   }
-
-  .stats-cards {
-    grid-template-columns: 1fr;
+  .admin-tabs .tab {
+    border-bottom: none;
+    border-left: 3px solid transparent;
+    padding: 0.75rem 1rem;
   }
-
-  .pending-loans {
-    padding: 1rem;
-    overflow-x: auto;
-  }
-
-  .pending-loans table {
-    min-width: 600px; /* Allow horizontal scroll on small screens */
-  }
-
-  .approve-btn, .reject-btn {
-    display: block;
-    width: 100%;
-    margin-bottom: 0.5rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .stat-value {
-    font-size: 2.5rem;
+  .admin-tabs .tab.active {
+    border-left-color: #2a9d8f;
   }
 }
