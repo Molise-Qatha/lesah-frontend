@@ -52,7 +52,7 @@ function Delivery() {
     }
   }, []);
 
-  // Load recent requests from localStorage
+  // Load ONLY successfully saved requests from localStorage
   useEffect(() => {
     const saved = localStorage.getItem('recentDeliveries');
     if (saved) setRecentRequests(JSON.parse(saved));
@@ -65,6 +65,7 @@ function Delivery() {
     true
   );
 
+  // Save a request ONLY when it was successfully submitted to the backend
   const saveToRecent = (request) => {
     const updated = [request, ...recentRequests.slice(0, 4)];
     setRecentRequests(updated);
@@ -92,15 +93,25 @@ function Delivery() {
     setShowModal(true);
   };
 
+  // ===== COMPLETELY FIXED: No localStorage on failure =====
   const handleStudentSubmit = async (formData) => {
     try {
       const result = await deliveryService.createRequest(formData);
-      saveToRecent({ id: result.id, ...formData, status: 'pending', createdAt: new Date().toISOString() });
-      toast.success(`Request submitted! Tracking ID: ${result.id}`);
+      // ONLY save to localStorage if the backend confirmed success
+      saveToRecent({
+        id: result.id,
+        ...formData,
+        status: 'pending',
+        createdAt: new Date().toISOString()
+      });
+      toast.success(`✅ Request submitted! Tracking ID: ${result.id}`);
       setShowModal(false);
-      queryClient.invalidateQueries(['deliveryRequests']); // If you have a requests list query
+      queryClient.invalidateQueries(['deliveryRequests']);
     } catch (error) {
-      toast.error(error.message || 'Failed to submit request');
+      // Show the EXACT error from the backend – NO silent fallback
+      toast.error(`❌ Delivery request failed: ${error.message}`);
+      console.error('Delivery request error:', error);
+      // DO NOT save anything to localStorage here
     }
   };
 
@@ -211,7 +222,7 @@ function Delivery() {
           {trackedDelivery && <TrackingResult delivery={trackedDelivery} />}
         </div>
 
-        {/* Recent Requests */}
+        {/* Recent Requests – only shows those that were actually saved via the backend */}
         {recentRequests.length > 0 && (
           <div className="recent-requests">
             <h2>Recent Delivery Requests</h2>
