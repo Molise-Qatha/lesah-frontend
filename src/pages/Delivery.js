@@ -35,6 +35,7 @@ function Delivery() {
   const [isTrackingLoading, setIsTrackingLoading] = useState(false);
   const [recentRequests, setRecentRequests] = useState([]);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [cancellingId, setCancellingId] = useState(null); // track which request is being cancelled
 
   // Auth check
   useEffect(() => {
@@ -52,12 +53,6 @@ function Delivery() {
     }
   }, []);
 
-  // Load ONLY successfully saved requests from localStorage
-  useEffect(() => {
-    const saved = localStorage.getItem('recentDeliveries');
-    if (saved) setRecentRequests(JSON.parse(saved));
-  }, []);
-
   // Fetch nearby drivers using React Query
   const { data: nearbyDrivers = [], isLoading: driversLoading } = useNearbyDrivers(
     userLocation.lat,
@@ -65,12 +60,27 @@ function Delivery() {
     true
   );
 
-  // Save a request ONLY when it was successfully submitted to the backend
-  const saveToRecent = (request) => {
-    const updated = [request, ...recentRequests.slice(0, 4)];
-    setRecentRequests(updated);
-    localStorage.setItem('recentDeliveries', JSON.stringify(updated));
+  // Fetch real delivery requests from backend when logged in
+  const fetchMyDeliveries = async () => {
+    if (!isLoggedIn) {
+      // If not logged in, use localStorage fallback
+      const saved = localStorage.getItem('recentDeliveries');
+      if (saved) setRecentRequests(JSON.parse(saved));
+      return;
+    }
+    try {
+      const data = await deliveryService.getMyRequests();
+      setRecentRequests(data);
+    } catch (error) {
+      // On error, show old localStorage data if available
+      const saved = localStorage.getItem('recentDeliveries');
+      if (saved) setRecentRequests(JSON.parse(saved));
+    }
   };
+
+  useEffect(() => {
+    fetchMyDeliveries();
+  }, [isLoggedIn]);
 
   const requireAuth = (action) => {
     if (!isLoggedIn) {
@@ -93,25 +103,17 @@ function Delivery() {
     setShowModal(true);
   };
 
-  // ===== COMPLETELY FIXED: No localStorage on failure =====
   const handleStudentSubmit = async (formData) => {
     try {
       const result = await deliveryService.createRequest(formData);
-      // ONLY save to localStorage if the backend confirmed success
-      saveToRecent({
-        id: result.id,
-        ...formData,
-        status: 'pending',
-        createdAt: new Date().toISOString()
-      });
-      toast.success(`✅ Request submitted! Tracking ID: ${result.id}`);
+      toast.success(`Request submitted! Tracking ID: ${result.id}`);
       setShowModal(false);
+      // Refresh list from backend
+      fetchMyDeliveries();
       queryClient.invalidateQueries(['deliveryRequests']);
     } catch (error) {
-      // Show the EXACT error from the backend – NO silent fallback
       toast.error(`❌ Delivery request failed: ${error.message}`);
       console.error('Delivery request error:', error);
-      // DO NOT save anything to localStorage here
     }
   };
 
@@ -140,6 +142,21 @@ function Delivery() {
       setTrackedDelivery(null);
     } finally {
       setIsTrackingLoading(false);
+    }
+  };
+
+  // Cancel a pending request
+  const handleCancelRequest = async (requestId) => {
+    if (!window.confirm('Are you sure you want to cancel this delivery request?')) return;
+    setCancellingId(requestId);
+    try {
+      await deliveryService.cancelRequest(requestId);
+      toast.success('Delivery request cancelled');
+      fetchMyDeliveries(); // Refresh list
+    } catch (error) {
+      toast.error(`Failed to cancel: ${error.message}`);
+    } finally {
+      setCancellingId(null);
     }
   };
 
@@ -222,20 +239,31 @@ function Delivery() {
           {trackedDelivery && <TrackingResult delivery={trackedDelivery} />}
         </div>
 
-        {/* Recent Requests – only shows those that were actually saved via the backend */}
+        {/* Recent Requests (real data from backend) */}
         {recentRequests.length > 0 && (
           <div className="recent-requests">
             <h2>Recent Delivery Requests</h2>
             <div className="requests-list">
-              {recentRequests.map((req, idx) => (
-                <div key={idx} className="request-item">
+              {recentRequests.map((req) => (
+                <div key={req.id} className="request-item">
                   <div className="request-icon">📦</div>
                   <div className="request-details">
-                    <p><strong>From:</strong> {req.pickup_location}</p>
-                    <p><strong>To:</strong> {req.dropoff_location}</p>
-                    <p><strong>Item:</strong> {req.item_description?.substring(0, 50)}...</p>
+                    <p><strong>From:</strong> {req.pickup_location || req.pickupLocation || 'N/A'}</p>
+                    <p><strong>To:</strong> {req.dropoff_location || req.dropoffLocation || 'N/A'}</p>
+                    <p><strong>Item:</strong> {(req.item_description || req.itemDescription || '').substring(0, 50)}...</p>
                     <small>Status: {req.status || 'Pending'}</small>
                   </div>
+                  {/* Cancel button – only for pending requests */}
+                  {isLoggedIn && req.status === 'pending' && (
+                    <button
+                      className="cancel-request-btn"
+                      onClick={() => handleCancelRequest(req.id)}
+                      disabled={cancellingId === req.id}
+                      title="Cancel this request"
+                    >
+                      {cancellingId === req.id ? '⏳' : '✕'}
+                    </button>
+                  )}
                 </div>
               ))}
             </div>
