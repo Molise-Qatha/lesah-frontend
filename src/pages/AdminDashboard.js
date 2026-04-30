@@ -219,7 +219,7 @@ function AdminDashboard() {
               <thead><tr><th>ID</th><th>User ID</th><th>Pickup</th><th>Dropoff</th><th>Item</th><th>Weight</th><th>Date</th><th>Actions</th></tr></thead>
               <tbody>{deliveries.map(delivery => (
                 <tr key={delivery.id}><td>{delivery.id}</td><td>{delivery.user_id}</td><td>{delivery.pickup_location || 'N/A'}</td><td>{delivery.dropoff_location || 'N/A'}</td><td>{delivery.item_description || 'N/A'}</td><td>{delivery.item_weight || 'N/A'}</td><td>{delivery.created_at?.slice(0,10)}</td>
-                  <td><button className="approve-btn" onClick={() => handleDeliveryStatus(delivery.id, 'in_transit')}>Confirm</button>
+                  <td><button className="approve-btn" onClick={() => handleDeliveryStatus(delivery.id, 'picked_up')}>Confirm</button>
                     <button className="reject-btn" onClick={() => handleDeliveryStatus(delivery.id, 'cancelled')}>Cancel</button></td></tr>))}</tbody></table></div>)}</section>)}
 
       {activeTab === 'users' && (
