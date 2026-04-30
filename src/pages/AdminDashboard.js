@@ -111,7 +111,6 @@ function AdminDashboard() {
     }
   };
 
-  // Helper: call a PATCH endpoint with automatic retry and error extraction
   const patchWithRetry = async (url) => {
     let lastError = '';
     for (let attempt = 1; attempt <= 2; attempt++) {
@@ -119,15 +118,11 @@ function AdminDashboard() {
         const res = await fetch(url, { method: 'PATCH', headers });
         if (res.ok) return;
         let errorDetail = `Server error ${res.status}`;
-        try {
-          const errorData = await res.json();
-          errorDetail = errorData.detail || errorDetail;
-        } catch {}
+        try { const errorData = await res.json(); errorDetail = errorData.detail || errorDetail; } catch {}
         lastError = errorDetail;
         console.warn(`Attempt ${attempt} failed: ${errorDetail}`);
         if (attempt === 1) await new Promise(r => setTimeout(r, 1000));
       } catch (networkErr) {
-        console.warn(`Attempt ${attempt} network error:`, networkErr);
         lastError = 'Network error. Ensure backend is running.';
         if (attempt === 1) await new Promise(r => setTimeout(r, 1000));
       }
@@ -137,50 +132,30 @@ function AdminDashboard() {
 
   const handleLoanStatus = async (loanId, status) => {
     try {
-      await patchWithRetry(
-        `${process.env.REACT_APP_API_URL}/api/v1/admin/loans/${loanId}/status?status=${status}`
-      );
-      fetchLoans();
-      fetchStats();
-    } catch (err) {
-      alert(`Loan update failed: ${err.message}`);
-    }
+      await patchWithRetry(`${process.env.REACT_APP_API_URL}/api/v1/admin/loans/${loanId}/status?status=${status}`);
+      fetchLoans(); fetchStats();
+    } catch (err) { alert(`Loan update failed: ${err.message}`); }
   };
 
   const handleVerifyDriver = async (driverId, approve) => {
     try {
-      await patchWithRetry(
-        `${process.env.REACT_APP_API_URL}/api/v1/admin/drivers/${driverId}/verify?approve=${approve}`
-      );
-      fetchDrivers();
-      fetchStats();
-    } catch (err) {
-      alert(`Driver verification failed: ${err.message}`);
-    }
+      await patchWithRetry(`${process.env.REACT_APP_API_URL}/api/v1/admin/drivers/${driverId}/verify?approve=${approve}`);
+      fetchDrivers(); fetchStats();
+    } catch (err) { alert(`Driver verification failed: ${err.message}`); }
   };
 
   const handleListingStatus = async (listingId, status) => {
     try {
-      await patchWithRetry(
-        `${process.env.REACT_APP_API_URL}/api/v1/admin/listings/${listingId}/status?status=${status}`
-      );
-      fetchListings();
-      fetchStats();
-    } catch (err) {
-      alert(`Listing update failed: ${err.message}`);
-    }
+      await patchWithRetry(`${process.env.REACT_APP_API_URL}/api/v1/admin/listings/${listingId}/status?status=${status}`);
+      fetchListings(); fetchStats();
+    } catch (err) { alert(`Listing update failed: ${err.message}`); }
   };
 
   const handleDeliveryStatus = async (deliveryId, status) => {
     try {
-      await patchWithRetry(
-        `${process.env.REACT_APP_API_URL}/api/v1/admin/deliveries/${deliveryId}/status?status=${status}`
-      );
-      fetchDeliveries();
-      fetchStats();
-    } catch (err) {
-      alert(`Delivery update failed: ${err.message}`);
-    }
+      await patchWithRetry(`${process.env.REACT_APP_API_URL}/api/v1/admin/deliveries/${deliveryId}/status?status=${status}`);
+      fetchDeliveries(); fetchStats();
+    } catch (err) { alert(`Delivery update failed: ${err.message}`); }
   };
 
   if (loading) return <div className="admin-loading">Loading...</div>;
@@ -188,30 +163,13 @@ function AdminDashboard() {
   return (
     <div className="admin-dashboard">
       <h1>Admin Dashboard</h1>
-
       <div className="stats-cards">
-        <div className="stat-card">
-          <span className="stat-value">{stats.pending_loans}</span>
-          <span className="stat-label">Pending Loans</span>
-        </div>
-        <div className="stat-card">
-          <span className="stat-value">{stats.pending_drivers}</span>
-          <span className="stat-label">Pending Drivers</span>
-        </div>
-        <div className="stat-card">
-          <span className="stat-value">{stats.pending_listings}</span>
-          <span className="stat-label">Pending Listings</span>
-        </div>
-        <div className="stat-card">
-          <span className="stat-value">{stats.pending_deliveries}</span>
-          <span className="stat-label">Pending Deliveries</span>
-        </div>
-        <div className="stat-card">
-          <span className="stat-value">{users.length}</span>
-          <span className="stat-label">Total Users</span>
-        </div>
+        <div className="stat-card"><span className="stat-value">{stats.pending_loans}</span> <span className="stat-label">Pending Loans</span></div>
+        <div className="stat-card"><span className="stat-value">{stats.pending_drivers}</span> <span className="stat-label">Pending Drivers</span></div>
+        <div className="stat-card"><span className="stat-value">{stats.pending_listings}</span> <span className="stat-label">Pending Listings</span></div>
+        <div className="stat-card"><span className="stat-value">{stats.pending_deliveries}</span> <span className="stat-label">Pending Deliveries</span></div>
+        <div className="stat-card"><span className="stat-value">{users.length}</span> <span className="stat-label">Total Users</span></div>
       </div>
-
       <div className="admin-tabs">
         <button className={`tab ${activeTab === 'loans' ? 'active' : ''}`} onClick={() => setActiveTab('loans')}>Loans</button>
         <button className={`tab ${activeTab === 'drivers' ? 'active' : ''}`} onClick={() => setActiveTab('drivers')}>Drivers</button>
@@ -220,143 +178,58 @@ function AdminDashboard() {
         <button className={`tab ${activeTab === 'users' ? 'active' : ''}`} onClick={() => setActiveTab('users')}>Users</button>
       </div>
 
-      {/* Loans Tab */}
       {activeTab === 'loans' && (
         <section className="admin-section">
           <h2>Loan Applications</h2>
           {loans.length === 0 ? <p>No pending loans.</p> : (
-            <div className="table-responsive">
-              <table>
-                <thead><tr><th>ID</th><th>User ID</th><th>Amount</th><th>Purpose</th><th>Created</th><th>Actions</th></tr></thead>
-                <tbody>
-                  {loans.map(loan => (
-                    <tr key={loan.id}>
-                      <td>{loan.id}</td><td>{loan.user_id}</td><td>M{loan.amount}</td><td>{loan.purpose}</td>
-                      <td>{loan.created_at?.slice(0,10)}</td>
-                      <td>
-                        <button className="approve-btn" onClick={() => handleLoanStatus(loan.id, 'approved')}>Approve</button>
-                        <button className="reject-btn" onClick={() => handleLoanStatus(loan.id, 'rejected')}>Reject</button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </section>
-      )}
+            <div className="table-responsive"><table>
+              <thead><tr><th>ID</th><th>User ID</th><th>Amount</th><th>Purpose</th><th>Created</th><th>Actions</th></tr></thead>
+              <tbody>{loans.map(loan => (
+                <tr key={loan.id}><td>{loan.id}</td><td>{loan.user_id}</td><td>M{loan.amount}</td><td>{loan.purpose}</td><td>{loan.created_at?.slice(0,10)}</td>
+                  <td><button className="approve-btn" onClick={() => handleLoanStatus(loan.id, 'approved')}>Approve</button>
+                    <button className="reject-btn" onClick={() => handleLoanStatus(loan.id, 'rejected')}>Reject</button></td></tr>))}</tbody></table></div>)}</section>)}
 
-      {/* Drivers Tab */}
       {activeTab === 'drivers' && (
         <section className="admin-section">
           <h2>Driver Verification</h2>
           {drivers.length === 0 ? <p>No pending drivers.</p> : (
-            <div className="table-responsive">
-              <table>
-                <thead><tr><th>ID</th><th>Full Name</th><th>Email</th><th>Vehicle</th><th>Area</th><th>Exp.</th><th>Actions</th></tr></thead>
-                <tbody>
-                  {drivers.map(driver => (
-                    <tr key={driver.id}>
-                      <td>{driver.id}</td><td>{driver.full_name}</td><td>{driver.email}</td>
-                      <td>{driver.vehicle_type || 'N/A'}</td><td>{driver.area_covered || 'N/A'}</td>
-                      <td>{driver.experience_years || '0'} yrs</td>
-                      <td>
-                        <button className="approve-btn" onClick={() => handleVerifyDriver(driver.id, true)}>Approve</button>
-                        <button className="reject-btn" onClick={() => handleVerifyDriver(driver.id, false)}>Reject</button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </section>
-      )}
+            <div className="table-responsive"><table>
+              <thead><tr><th>ID</th><th>Full Name</th><th>Email</th><th>Vehicle</th><th>Area</th><th>Exp.</th><th>Actions</th></tr></thead>
+              <tbody>{drivers.map(driver => (
+                <tr key={driver.id}><td>{driver.id}</td><td>{driver.full_name}</td><td>{driver.email}</td><td>{driver.vehicle_type || 'N/A'}</td><td>{driver.area_covered || 'N/A'}</td><td>{driver.experience_years || '0'} yrs</td>
+                  <td><button className="approve-btn" onClick={() => handleVerifyDriver(driver.id, true)}>Approve</button>
+                    <button className="reject-btn" onClick={() => handleVerifyDriver(driver.id, false)}>Reject</button></td></tr>))}</tbody></table></div>)}</section>)}
 
-      {/* Listings Tab */}
       {activeTab === 'listings' && (
         <section className="admin-section">
           <h2>Accommodation Listings</h2>
           {listings.length === 0 ? <p>No pending listings.</p> : (
-            <div className="table-responsive">
-              <table>
-                <thead><tr><th>ID</th><th>Name</th><th>Location</th><th>Price</th><th>Type</th><th>Actions</th></tr></thead>
-                <tbody>
-                  {listings.map(listing => (
-                    <tr key={listing.id}>
-                      <td>{listing.id}</td><td>{listing.name}</td><td>{listing.location}</td>
-                      <td>M{listing.price_value}</td><td>{listing.room_type}</td>
-                      <td>
-                        <button className="approve-btn" onClick={() => handleListingStatus(listing.id, 'approved')}>Approve</button>
-                        <button className="reject-btn" onClick={() => handleListingStatus(listing.id, 'rejected')}>Reject</button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </section>
-      )}
+            <div className="table-responsive"><table>
+              <thead><tr><th>ID</th><th>Name</th><th>Location</th><th>Price</th><th>Type</th><th>Actions</th></tr></thead>
+              <tbody>{listings.map(listing => (
+                <tr key={listing.id}><td>{listing.id}</td><td>{listing.name}</td><td>{listing.location}</td><td>M{listing.price_value}</td><td>{listing.room_type}</td>
+                  <td><button className="approve-btn" onClick={() => handleListingStatus(listing.id, 'approved')}>Approve</button>
+                    <button className="reject-btn" onClick={() => handleListingStatus(listing.id, 'rejected')}>Reject</button></td></tr>))}</tbody></table></div>)}</section>)}
 
-      {/* Deliveries Tab */}
       {activeTab === 'deliveries' && (
         <section className="admin-section">
           <h2>Delivery Requests</h2>
           {deliveries.length === 0 ? <p>No pending deliveries.</p> : (
-            <div className="table-responsive">
-              <table>
-                <thead>
-                  <tr>
-                    <th>ID</th><th>User ID</th><th>Pickup</th><th>Dropoff</th>
-                    <th>Item</th><th>Weight</th><th>Date</th><th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {deliveries.map(delivery => (
-                    <tr key={delivery.id}>
-                      <td>{delivery.id}</td>
-                      <td>{delivery.user_id}</td>
-                      <td>{delivery.pickup_location || 'N/A'}</td>
-                      <td>{delivery.dropoff_location || 'N/A'}</td>
-                      <td>{delivery.item_description || 'N/A'}</td>
-                      <td>{delivery.item_weight || 'N/A'}</td>
-                      <td>{delivery.created_at?.slice(0,10)}</td>
-                      <td>
-                        <button className="approve-btn" onClick={() => handleDeliveryStatus(delivery.id, 'in_transit')}>Confirm</button>
-                        <button className="reject-btn" onClick={() => handleDeliveryStatus(delivery.id, 'cancelled')}>Cancel</button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </section>
-      )}
+            <div className="table-responsive"><table>
+              <thead><tr><th>ID</th><th>User ID</th><th>Pickup</th><th>Dropoff</th><th>Item</th><th>Weight</th><th>Date</th><th>Actions</th></tr></thead>
+              <tbody>{deliveries.map(delivery => (
+                <tr key={delivery.id}><td>{delivery.id}</td><td>{delivery.user_id}</td><td>{delivery.pickup_location || 'N/A'}</td><td>{delivery.dropoff_location || 'N/A'}</td><td>{delivery.item_description || 'N/A'}</td><td>{delivery.item_weight || 'N/A'}</td><td>{delivery.created_at?.slice(0,10)}</td>
+                  <td><button className="approve-btn" onClick={() => handleDeliveryStatus(delivery.id, 'in_transit')}>Confirm</button>
+                    <button className="reject-btn" onClick={() => handleDeliveryStatus(delivery.id, 'cancelled')}>Cancel</button></td></tr>))}</tbody></table></div>)}</section>)}
 
-      {/* Users Tab */}
       {activeTab === 'users' && (
         <section className="admin-section">
           <h2>Registered Users</h2>
           {users.length === 0 ? <p>No users found.</p> : (
-            <div className="table-responsive">
-              <table>
-                <thead><tr><th>ID</th><th>Full Name</th><th>Email</th><th>Role</th><th>Verified</th><th>Joined</th></tr></thead>
-                <tbody>
-                  {users.map(user => (
-                    <tr key={user.id}>
-                      <td>{user.id}</td><td>{user.full_name}</td><td>{user.email}</td>
-                      <td>{user.role}</td><td>{user.is_verified ? 'Yes' : 'No'}</td>
-                      <td>{user.created_at?.slice(0,10)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </section>
-      )}
+            <div className="table-responsive"><table>
+              <thead><tr><th>ID</th><th>Full Name</th><th>Email</th><th>Role</th><th>Verified</th><th>Joined</th></tr></thead>
+              <tbody>{users.map(user => (
+                <tr key={user.id}><td>{user.id}</td><td>{user.full_name}</td><td>{user.email}</td><td>{user.role}</td><td>{user.is_verified ? 'Yes' : 'No'}</td><td>{user.created_at?.slice(0,10)}</td></tr>))}</tbody></table></div>)}</section>)}
     </div>
   );
 }
