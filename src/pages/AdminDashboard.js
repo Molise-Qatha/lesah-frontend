@@ -114,13 +114,10 @@ function AdminDashboard() {
   // Helper: call a PATCH endpoint with automatic retry and error extraction
   const patchWithRetry = async (url) => {
     let lastError = '';
-    // Try up to 2 times
     for (let attempt = 1; attempt <= 2; attempt++) {
       try {
         const res = await fetch(url, { method: 'PATCH', headers });
-        if (res.ok) return; // success, stop here
-
-        // Try to extract error detail from response
+        if (res.ok) return;
         let errorDetail = `Server error ${res.status}`;
         try {
           const errorData = await res.json();
@@ -128,7 +125,6 @@ function AdminDashboard() {
         } catch {}
         lastError = errorDetail;
         console.warn(`Attempt ${attempt} failed: ${errorDetail}`);
-        // Wait a moment before retry (backend may be waking up)
         if (attempt === 1) await new Promise(r => setTimeout(r, 1000));
       } catch (networkErr) {
         console.warn(`Attempt ${attempt} network error:`, networkErr);
@@ -327,7 +323,7 @@ function AdminDashboard() {
                       <td>{delivery.item_weight || 'N/A'}</td>
                       <td>{delivery.created_at?.slice(0,10)}</td>
                       <td>
-                        <button className="approve-btn" onClick={() => handleDeliveryStatus(delivery.id, 'confirmed')}>Confirm</button>
+                        <button className="approve-btn" onClick={() => handleDeliveryStatus(delivery.id, 'in_transit')}>Confirm</button>
                         <button className="reject-btn" onClick={() => handleDeliveryStatus(delivery.id, 'cancelled')}>Cancel</button>
                       </td>
                     </tr>
