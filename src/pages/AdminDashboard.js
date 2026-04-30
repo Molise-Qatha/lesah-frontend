@@ -111,61 +111,69 @@ function AdminDashboard() {
     }
   };
 
-  const handleLoanStatus = async (loanId, status) => {
+  // Helper: call a PATCH endpoint with automatic retry
+  const patchWithRetry = async (url, options = {}) => {
     try {
-      await fetch(
-        `${process.env.REACT_APP_API_URL}/api/v1/admin/loans/${loanId}/status?status=${status}`,
-        { method: 'PATCH', headers }
-      );
+      const res = await fetch(url, { method: 'PATCH', headers, ...options });
+      if (res.ok) return res;
+      // If first attempt fails due to server error, try once more
+      console.warn('First attempt failed, retrying…');
+      const retryRes = await fetch(url, { method: 'PATCH', headers, ...options });
+      return retryRes;
+    } catch (err) {
+      // Network error – try again immediately
+      console.warn('Network error, retrying…');
+      const retryRes = await fetch(url, { method: 'PATCH', headers, ...options });
+      return retryRes;
+    }
+  };
+
+  const handleLoanStatus = async (loanId, status) => {
+    const res = await patchWithRetry(
+      `${process.env.REACT_APP_API_URL}/api/v1/admin/loans/${loanId}/status?status=${status}`
+    );
+    if (res && res.ok) {
       fetchLoans();
       fetchStats();
-    } catch (err) {
-      console.error('Loan status update error:', err);
+    } else {
+      alert('Could not update loan. The backend may be asleep – please wait 10 seconds and try again.');
     }
   };
 
   const handleVerifyDriver = async (driverId, approve) => {
-    try {
-      await fetch(
-        `${process.env.REACT_APP_API_URL}/api/v1/admin/drivers/${driverId}/verify?approve=${approve}`,
-        { method: 'PATCH', headers }
-      );
+    const res = await patchWithRetry(
+      `${process.env.REACT_APP_API_URL}/api/v1/admin/drivers/${driverId}/verify?approve=${approve}`
+    );
+    if (res && res.ok) {
       fetchDrivers();
       fetchStats();
-    } catch (err) {
-      console.error('Driver verify error:', err);
+    } else {
+      alert('Could not verify driver. The backend may be asleep – please wait 10 seconds and try again.');
     }
   };
 
   const handleListingStatus = async (listingId, status) => {
-    try {
-      await fetch(
-        `${process.env.REACT_APP_API_URL}/api/v1/admin/listings/${listingId}/status?status=${status}`,
-        { method: 'PATCH', headers }
-      );
+    const res = await patchWithRetry(
+      `${process.env.REACT_APP_API_URL}/api/v1/admin/listings/${listingId}/status?status=${status}`
+    );
+    if (res && res.ok) {
       fetchListings();
       fetchStats();
-    } catch (err) {
-      console.error('Listing status update error:', err);
+    } else {
+      alert('Could not update listing. The backend may be asleep – please wait 10 seconds and try again.');
     }
   };
 
   const handleDeliveryStatus = async (deliveryId, status) => {
-    try {
-      const url = `${process.env.REACT_APP_API_URL}/api/v1/admin/deliveries/${deliveryId}/status?status=${status}`;
-      const res = await fetch(url, { method: 'PATCH', headers });
-      if (res.ok) {
-        console.log(`Delivery ${deliveryId} marked as ${status}`);
-        fetchDeliveries();
-        fetchStats();
-      } else {
-        const error = await res.json();
-        console.error('Update failed:', error);
-        alert(`Failed to ${status} delivery: ${error.detail || 'Unknown error'}`);
-      }
-    } catch (err) {
-      console.error('Delivery status update error:', err);
-      alert('Network error – could not update delivery.');
+    const res = await patchWithRetry(
+      `${process.env.REACT_APP_API_URL}/api/v1/admin/deliveries/${deliveryId}/status?status=${status}`
+    );
+    if (res && res.ok) {
+      console.log(`Delivery ${deliveryId} marked as ${status}`);
+      fetchDeliveries();
+      fetchStats();
+    } else {
+      alert(`Failed to ${status} delivery. The backend may be asleep – wait 10 seconds and try again.`);
     }
   };
 
